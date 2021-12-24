@@ -58,7 +58,7 @@ def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
     return(yesterday.strftime("%Y-%m-%d"))
 
-def currency_to_actual_date(date,currency_to_date_interval):    
+def currency_to_actual_date(date,currency_to_date_interval):
     currency_array = currency_to_date_interval
     kurs_on_the_actual_date = currency_array.get(date, {}).get('ask')
     if kurs_on_the_actual_date != None:
@@ -66,7 +66,6 @@ def currency_to_actual_date(date,currency_to_date_interval):
         return kurs_on_the_actual_date
     else:
         yesterday = get_yesterday(date)
-        print(yesterday)
         currency_to_actual_date(yesterday,currency_to_date_interval)
 
 def csv_read(skip_lines,currency_to_date_interval):
