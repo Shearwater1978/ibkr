@@ -71,6 +71,7 @@ def csv_read(in_file,skip_lines,currency_to_date_interval):
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines+1):
             next(reader)
+        print("Ticker;Date;Dividends(USD);Dividends(PLN);Rate(PLN-USD)")
         for row in reader:
             if str(row[2]) != "Total":
                 if str(row[0]) == "Dividends" and str(row[1]) != "Header":
@@ -79,9 +80,9 @@ def csv_read(in_file,skip_lines,currency_to_date_interval):
                     div_amount = row[-2]
                     ticker = row[-3].split()[0].split('(')[0]
                     cur_ask = currency_date_array.get(date, {}).get('ask')
-                    currency_current = round(currency_to_actual_date(date,currency_to_date_interval),2)
-                    print(ticker,date,div_amount,currency_current,round(float(currency_current)*float(div_amount),2))
-                    #print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,cur_ask))
+                    currency_current = round(currency_to_actual_date(date,currency_to_date_interval),3)
+                    print(f'%s;%s;%s;%s;%s' %(ticker,date,div_amount,round(float(currency_current)*float(div_amount),2),currency_current))
+                    # print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,round(float(currency_current)*float(div_amount),2)))
 
 def main():
     print('main')
