@@ -63,14 +63,15 @@ def currency_to_actual_date(date,currency_to_date_interval):
     kurs_on_the_actual_date = currency_array.get(date, {}).get('ask')
     if kurs_on_the_actual_date != None:
         print("On the date >%s< bank course is >%s<" % (date,kurs_on_the_actual_date))
-        return kurs_on_the_actual_date
+        # return kurs_on_the_actual_date
+        return 1.234
     else:
         yesterday = get_yesterday(date)
         currency_to_actual_date(yesterday,currency_to_date_interval)
 
 def csv_read(skip_lines,currency_to_date_interval):
     currency_date_array = currency_to_date_interval
-    with open('U5801627_20211004_20211213.csv', newline='') as csvfile:
+    with open('data.txt', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines+1):
             next(reader)
