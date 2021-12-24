@@ -1,0 +1,12 @@
+﻿Statement,Header,Field Name,Field Value
+Statement,Data,BrokerName,Interactive Brokers LLC
+Statement,Data,BrokerAddress,"Two Pickwick Plaza, Greenwich, CT 06830"
+Statement,Data,Title,Activity Statement
+Statement,Data,Period,"October 4, 2021 - December 13, 2021"
+Statement,Data,WhenGenerated,"2021-12-14, 02:36:28 EST"
+Dividends,Header,Currency,Date,Description,Amount,Code
+Dividends,Data,USD,2021-11-01,T(US00206R1023) Cash Dividend USD 0.52 per Share (Ordinary Dividend),1.04,
+Dividends,Data,USD,2021-11-01,VZ(US92343V1044) Cash Dividend USD 0.64 per Share (Ordinary Dividend),2.56,
+Dividends,Data,USD,2021-11-11,AAPL(US0378331005) Cash Dividend USD 0.22 per Share (Ordinary Dividend),0.66,
+Dividends,Data,USD,2021-11-15,ABBV(US00287Y1091) Cash Dividend USD 1.30 per Share (Ordinary Dividend),2.6,
+Dividends,Data,Total,,,43.05,
