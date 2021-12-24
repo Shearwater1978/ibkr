@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import csv
@@ -26,7 +26,7 @@ def get_date_range(skip_lines):
     tmp_date = ''
     dates = []
     pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
-    with open('U5801627_20211004_20211213.csv','r') as csvfile:
+    with open('U5801627_20211004_20211223.csv','r') as csvfile:
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines):
             next(reader)
@@ -46,7 +46,7 @@ def get_date_range(skip_lines):
 def csv_get_stmnt():
     match_count = 0
     pattern = '^Statement'
-    with open('data.txt','r') as csvfile:
+    with open('U5801627_20211004_20211223.csv','r') as csvfile:
         reader = csv.reader(csvfile)
         for line in reader:
             check_line = str(line[0])
@@ -72,14 +72,14 @@ def csv_read(skip_lines,currency_to_date_interval):
             next(reader)
         for row in reader:
             if str(row[2]) != "Total":
-                if str(row[0]) == "Dividends" and str(row[1]) != "Header" and row[-3].split()[0].split('(')[0]=="T":
+                if str(row[0]) == "Dividends" and str(row[1]) != "Header":
                     date = row[3]
                     currency = row[2]
                     div_amount = row[-2]
                     ticker = row[-3].split()[0].split('(')[0]
                     cur_ask = currency_date_array.get(date, {}).get('ask')
-                    currency_current = currency_to_actual_date(date,currency_to_date_interval)
-                    print(ticker,date,div_amount,currency_current,cur_ask)
+                    currency_current = round(currency_to_actual_date(date,currency_to_date_interval),2)
+                    print(ticker,date,div_amount,currency_current,round(float(currency_current)*float(div_amount),3))
                     #print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,cur_ask))
 
 def main():
