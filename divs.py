@@ -7,6 +7,7 @@ from typing import Pattern
 import urllib.request, json
 import datetime as dt
 from datetime import datetime
+import sys
 
 def get_currency_price(from_date, to_date):
     currency_info = {}
@@ -20,7 +21,7 @@ def get_currency_price(from_date, to_date):
             currency_info[effectiveDate] = {'bid': bid, 'ask': ask}
     return(currency_info)
 
-def get_date_range(skip_lines):
+def get_date_range(in_file,skip_lines):
     from_date = ''
     to_date = ''
     tmp_date = ''
@@ -43,10 +44,10 @@ def get_date_range(skip_lines):
     to_date = uniquedates[-1]
     return(from_date, to_date)
 
-def csv_get_stmnt():
+def csv_get_stmnt(in_file):
     match_count = 0
     pattern = '^Statement'
-    with open('U5801627_20211004_20211223.csv','r') as csvfile:
+    with open(in_file,'r') as csvfile:
         reader = csv.reader(csvfile)
         for line in reader:
             check_line = str(line[0])
@@ -79,13 +80,14 @@ def csv_read(skip_lines,currency_to_date_interval):
                     ticker = row[-3].split()[0].split('(')[0]
                     cur_ask = currency_date_array.get(date, {}).get('ask')
                     currency_current = round(currency_to_actual_date(date,currency_to_date_interval),2)
-                    print(ticker,date,div_amount,currency_current,round(float(currency_current)*float(div_amount),3))
+                    print(ticker,date,div_amount,currency_current,round(float(currency_current)*float(div_amount),2))
                     #print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,cur_ask))
 
 def main():
     print('main')
 
 if __name__ == '__main__':
-    skip_lines = csv_get_stmnt()
-    from_date, to_date = get_date_range(skip_lines)
+    in_file = sys.argv[1]
+    skip_lines = csv_get_stmnt(in_file)
+    from_date, to_date = get_date_range(in_file,skip_lines)
     csv_read(skip_lines,get_currency_price(from_date, to_date))
