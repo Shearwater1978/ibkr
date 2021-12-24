@@ -26,7 +26,7 @@ def get_date_range(skip_lines):
     tmp_date = ''
     dates = []
     pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
-    with open('data.txt','r') as csvfile:
+    with open('U5801627_20211004_20211213.csv','r') as csvfile:
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines):
             next(reader)
@@ -59,14 +59,10 @@ def get_yesterday(date):
     return(yesterday.strftime("%Y-%m-%d"))
 
 def currency_to_actual_date(date,currency_to_date_interval):
-    currency_array = currency_to_date_interval
-    kurs_on_the_actual_date = currency_array.get(date, {}).get('ask')
-    if kurs_on_the_actual_date != None:
-        print("On the date >%s< bank course is >%s<" % (date,kurs_on_the_actual_date))
-        return kurs_on_the_actual_date
-    else:
-        yesterday = get_yesterday(date)
-        currency_to_actual_date(yesterday,currency_to_date_interval)
+    kurs_on_the_actual_date = currency_to_date_interval.get(date, {}).get('ask')
+    if kurs_on_the_actual_date == None:
+        kurs_on_the_actual_date = currency_to_actual_date(get_yesterday(date),currency_to_date_interval)
+    return kurs_on_the_actual_date
 
 def csv_read(skip_lines,currency_to_date_interval):
     currency_date_array = currency_to_date_interval
