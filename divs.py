@@ -27,7 +27,7 @@ def get_date_range(in_file,skip_lines):
     tmp_date = ''
     dates = []
     pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
-    with open('U5801627_20211004_20211223.csv','r') as csvfile:
+    with open(in_file,'r') as csvfile:
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines):
             next(reader)
@@ -46,12 +46,12 @@ def get_date_range(in_file,skip_lines):
 
 def csv_get_stmnt(in_file):
     match_count = 0
-    pattern = '^Statement'
+    pat_list = ['StatementHeader','StatementData','DividendsHeader']
+    pat = re.compile('|'.join(pat_list))
     with open(in_file,'r') as csvfile:
         reader = csv.reader(csvfile)
         for line in reader:
-            check_line = str(line[0])
-            if re.findall(pattern, check_line):
+            if pat.match(line[0]+line[1]):
                 match_count += 1
     return(match_count)
 
@@ -65,9 +65,9 @@ def currency_to_actual_date(date,currency_to_date_interval):
         kurs_on_the_actual_date = currency_to_actual_date(get_yesterday(date),currency_to_date_interval)
     return kurs_on_the_actual_date
 
-def csv_read(skip_lines,currency_to_date_interval):
+def csv_read(in_file,skip_lines,currency_to_date_interval):
     currency_date_array = currency_to_date_interval
-    with open('data.txt', newline='') as csvfile:
+    with open(in_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for i in range (0, skip_lines+1):
             next(reader)
@@ -90,4 +90,4 @@ if __name__ == '__main__':
     in_file = sys.argv[1]
     skip_lines = csv_get_stmnt(in_file)
     from_date, to_date = get_date_range(in_file,skip_lines)
-    csv_read(skip_lines,get_currency_price(from_date, to_date))
+    csv_read(in_file,skip_lines,get_currency_price(from_date, to_date))
