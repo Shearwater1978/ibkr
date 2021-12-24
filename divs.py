@@ -5,7 +5,7 @@ import csv
 import re
 from typing import Pattern
 import urllib.request, json
-import datetime
+import datetime as dt
 from datetime import datetime
 
 def get_currency_price(from_date, to_date):
@@ -54,12 +54,21 @@ def csv_get_stmnt():
                 match_count += 1
     return(match_count)
 
+def get_yesterday(date):
+    yesterday = ''
+    yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
+    return(yesterday.strftime("%Y-%m-%d"))
+
 def currency_to_actual_date(date,currency_to_date_interval):
     actual_date = date
     currency_array = currency_to_date_interval
-    current_actual_date = currency_array.get(date, {}).get('ask')
-    #print(currency_to_date_interval)
-    return(current_actual_date)
+    kurs_on_the_actual_date = currency_array.get(actual_date, {}).get('ask')
+    if kurs_on_the_actual_date != None:
+        print("On the date >%s< bank course is >%s<" % (actual_date,kurs_on_the_actual_date))
+        return kurs_on_the_actual_date
+    else:
+        yesterday = get_yesterday(date)
+        currency_to_actual_date(yesterday,currency_to_date_interval)
 
 def csv_read(skip_lines,currency_to_date_interval):
     currency_date_array = currency_to_date_interval
@@ -69,7 +78,7 @@ def csv_read(skip_lines,currency_to_date_interval):
             next(reader)
         for row in reader:
             if str(row[2]) != "Total":
-                if str(row[0]) == "Dividends" and str(row[1]) != "Header":
+                if str(row[0]) == "Dividends" and str(row[1]) != "Header" and row[-3].split()[0].split('(')[0]=="T":
                     date = row[3]
                     currency = row[2]
                     div_amount = row[-2]
