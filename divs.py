@@ -44,6 +44,7 @@ def get_date_range(in_file,skip_lines):
     to_date = uniquedates[-1]
     return(from_date, to_date)
 
+# Get lines count for skip when getting didivends
 def csv_get_stmnt(in_file):
     match_count = 0
     pat_list = ['StatementHeader','StatementData','DividendsHeader']
@@ -55,6 +56,7 @@ def csv_get_stmnt(in_file):
                 match_count += 1
     return(match_count)
 
+# Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
     return(yesterday.strftime("%Y-%m-%d"))
@@ -85,7 +87,7 @@ def csv_read(in_file,skip_lines,currency_to_date_interval):
                     # print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,round(float(currency_current)*float(div_amount),2)))
 
 def main():
-    print('main')
+    pass
 
 if __name__ == '__main__':
     in_file = sys.argv[1]
