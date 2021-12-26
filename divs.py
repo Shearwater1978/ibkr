@@ -84,13 +84,16 @@ def csv_read(in_file,skip_lines,currency_to_date_interval):
                     cur_ask = currency_date_array.get(date, {}).get('ask')
                     currency_current = round(currency_to_actual_date(date,currency_to_date_interval),3)
                     print(f'%s;%s;%s;%s;%s' %(ticker,date,div_amount,round(float(currency_current)*float(div_amount),2),currency_current))
-                    # print(f'Ticker: %s, Currency: %s, Date: %s, Dividends(USD): %s, Dividends(PLN): %s' %(ticker,currency,date,div_amount,round(float(currency_current)*float(div_amount),2)))
-
+                    
 def main():
     pass
 
 if __name__ == '__main__':
-    in_file = sys.argv[1]
+    if len(sys.argv) <= 1:
+        print("Input file missed. Abort")
+        sys.exit(0)
+    else:
+        in_file = sys.argv[1]
     skip_lines = csv_get_stmnt(in_file)
     from_date, to_date = get_date_range(in_file,skip_lines)
     csv_read(in_file,skip_lines,get_currency_price(from_date, to_date))
