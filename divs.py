@@ -3,22 +3,27 @@
 
 import csv
 import re
-from typing import Pattern
+# from typing import Pattern
 import urllib.request, json
 import datetime as dt
 from datetime import datetime
 import sys
 
+# To do: 
+# 1. Split function to a couple function. One: get currencies array and another function
+# 2. Create autodetect different currency in data file
 def get_currency_price(from_date, to_date):
     currency_info = {}
-    URL = f'http://api.nbp.pl/api/exchangerates/rates/c/usd/%s/%s' %(from_date, to_date)
-    with urllib.request.urlopen(URL) as url:
-        data = json.loads(url.read().decode())
-        for item in data['rates']:
-            effectiveDate = item['effectiveDate']
-            bid = item['bid']
-            ask = item['ask']
-            currency_info[effectiveDate] = {'bid': bid, 'ask': ask}
+    for currency in ["USD","EUR"]:
+        currency_url = f'http://api.nbp.pl/api/exchangerates/rates/c/%s/%s/%s' %(currency,from_date, to_date)
+        with urllib.request.urlopen(currency_url) as url:
+            data = json.loads(url.read().decode())
+            for item in data['rates']:
+                effectiveDate = item['effectiveDate']
+                bid = item['bid']
+                ask = item['ask']
+                currency_info[effectiveDate] = {'bid': bid, 'ask': ask}
+        print(data)
     return(currency_info)
 
 def get_date_range(in_file,skip_lines):
