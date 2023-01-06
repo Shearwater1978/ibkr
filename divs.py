@@ -14,7 +14,7 @@ import sys
 def get_currency_price(from_date, to_date, currency):
     currency_info = {}
     URL = f'http://api.nbp.pl/api/exchangerates/rates/c/%s/%s/%s' %(currency, from_date, to_date)
-    print(URL)
+    # print(URL)
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
         for enum, item in enumerate(data['rates']):
@@ -129,22 +129,47 @@ def csv_read_2023(infile):
 
 
 def currency_convert_to_date(currency, date, currencies_bids):
-    for currencies in currencies_bids:
-        for key in currencies:
-            if key == currency:
-                currency_to_date = round(currencies[key]['2022-01-03']['ask'], 3)
-    return(currency_to_date)
+    pass
+    # print(currencies_bids)
+    # for item_id, item_data in currencies_bids.items():
+    #     print("--->", item_data['currency'])
+    
+    # for item_id, item_data in currencies_bids.items():
+    #     for key in item_data:
+    #         if currency == item_data['currency']:
+    #             print('If section', item_data['currency'])
+    #             if date == item_data['effectiveDate']:
+    #                 print('Date: {} currency: {} found in Archive currencies'.format(date, currency))
+    #                 return item_data['ask']
+    #             else:
+    #                 print('Date: {} currency: {} not found in Archive currencies'.format(date, currency))
+    #                 return item_data['ask']
+    #         else:
+    #             print('Else section', item_data['currency'])
+            # print(key + ":", item_data[key])
+    # for currencies in currencies_bids:
+    #     for key in currencies:
+    #         if key == currency:
+    #             currency_to_date = round(currencies[key]['2022-01-03']['ask'], 3)
+    # return(currency_to_date)
 
 
 def formation_final_report(raw_dividend_list, currencies_bids):
     divs_list = []
     for enum, div in enumerate(raw_dividend_list):
-        if enum == 5:
+        if enum == 2:
             break
         currency = div['currency']
         date = div['date']
-        div_amount_pln = str(float(div['div_amount']) * float(currency_convert_to_date(currency, date, currencies_bids)))
-        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+        print('Ticker:{} Date:{} Currency:{} Div_Amount:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount']))
+        # print(currencies_bids)
+        # print(currency_convert_to_date(currency, date, currencies_bids))
+        # for item_id, item_data in currencies_bids.items():
+        #     print('\nid:', item_id)
+        #     for key in item_data:
+        #         print(key + ":", item_data[key])
+        # div_amount_pln = str(float(div['div_amount']) * float(currency_convert_to_date(currency, date, currencies_bids)))
+        # divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
 
 
 def main():
@@ -165,10 +190,10 @@ if __name__ == '__main__':
     currencies_bids = []
     for currency in currencies:
         currencies_bids = get_currency_price(from_date, to_date, currency)
-        # Debug output currencies result list
+        # # Debug output currencies result list
         # for item_id, item_data in currencies_bids.items():
         #     print('\nid:', item_id)
         #     for key in item_data:
         #         print(key + ":", item_data[key])
     print(currencies_bids)
-    # formation_final_report(raw_divs_list, currencies_bids)
+    formation_final_report(raw_divs_list, currencies_bids)
