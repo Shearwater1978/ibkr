@@ -89,6 +89,9 @@ def csv_read_2023(infile):
                 from_date = datetime.strptime(from_date_raw, '%B %d, %Y').date().strftime('%Y-%m-%d')
                 to_date = datetime.strptime(to_date_raw, '%B %d, %Y').date().strftime('%Y-%m-%d')
             if not re.match('Total', str(row[2])):
+                '''
+                    Read Reports line by line and add each record about Dividends into list of dictionaries
+                '''
                 if str(row[0]) == "Dividends" and str(row[1]) != "Header":
                     date = row[3]
                     currency = row[2].lower()
