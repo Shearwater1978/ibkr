@@ -69,9 +69,10 @@ def currency_to_actual_date(date,currency_to_date_interval):
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency 
 def csv_read_2023(infile):
-    raw_divs_list = []
     with open(in_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
+        currencies = []
+        raw_divs_list = []
         for row in reader:
             if re.match('Period', str(row[2])):
                 '''
@@ -93,8 +94,10 @@ def csv_read_2023(infile):
                     currency = row[2].lower()
                     div_amount = row[-2]
                     ticker = row[-3].split()[0].split('(')[0]
+                    if currency not in currencies:
+                        currencies.append(currency)
                     raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount})
-    return(raw_divs_list, from_date, to_date)
+    return(raw_divs_list, from_date, to_date, currencies)
 
 
 # def csv_read(in_file,skip_lines,currency_to_date_interval):
@@ -128,5 +131,4 @@ if __name__ == '__main__':
     # from_date, to_date = get_date_range(in_file,skip_lines)
     # csv_read(in_file,skip_lines,get_currency_price(from_date, to_date))
     # Reading Report and get list of all dividends, and two date of boundaries for Report
-    raw_divs_list, from_date, to_date = csv_read_2023(in_file)
-
+    raw_divs_list, from_date, to_date, currencies = csv_read_2023(in_file)
