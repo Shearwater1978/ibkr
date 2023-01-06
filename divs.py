@@ -9,9 +9,9 @@ import datetime as dt
 from datetime import datetime
 import sys
 
-def get_currency_price(from_date, to_date):
+def get_currency_price(from_date, to_date, currency):
     currency_info = {}
-    URL = f'http://api.nbp.pl/api/exchangerates/rates/c/usd/%s/%s' %(from_date, to_date)
+    URL = f'http://api.nbp.pl/api/exchangerates/rates/c/%s/%s/%s' %(currency, from_date, to_date)
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
         for item in data['rates']:
@@ -21,40 +21,40 @@ def get_currency_price(from_date, to_date):
             currency_info[effectiveDate] = {'bid': bid, 'ask': ask}
     return(currency_info)
 
-def get_date_range(in_file,skip_lines):
-    from_date = ''
-    to_date = ''
-    tmp_date = ''
-    dates = []
-    pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
-    with open(in_file,'r') as csvfile:
-        reader = csv.reader(csvfile)
-        for i in range (0, skip_lines):
-            next(reader)
-        for row in reader:
-            tmp_date = str(row[3])
-            if row[0] == 'Dividends':
-                if row[1] == 'Data':
-                    if row[2] != 'Total':   
-                        if re.findall(pattern, str(row[3])):
-                            dates.append(datetime.strptime(tmp_date, '%Y-%m-%d').date())
-    sorteddates = [datetime.strftime(ts, "%Y-%m-%d") for ts in dates]
-    uniquedates = list(dict.fromkeys(sorteddates))
-    from_date = uniquedates[0]
-    to_date = uniquedates[-1]
-    return(from_date, to_date)
+# def get_date_range(in_file,skip_lines):
+#     from_date = ''
+#     to_date = ''
+#     tmp_date = ''
+#     dates = []
+#     pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
+#     with open(in_file,'r') as csvfile:
+#         reader = csv.reader(csvfile)
+#         for i in range (0, skip_lines):
+#             next(reader)
+#         for row in reader:
+#             tmp_date = str(row[3])
+#             if row[0] == 'Dividends':
+#                 if row[1] == 'Data':
+#                     if row[2] != 'Total':   
+#                         if re.findall(pattern, str(row[3])):
+#                             dates.append(datetime.strptime(tmp_date, '%Y-%m-%d').date())
+#     sorteddates = [datetime.strftime(ts, "%Y-%m-%d") for ts in dates]
+#     uniquedates = list(dict.fromkeys(sorteddates))
+#     from_date = uniquedates[0]
+#     to_date = uniquedates[-1]
+#     return(from_date, to_date)
 
 # Get lines count for skip when getting didivends
-def csv_get_stmnt(in_file):
-    match_count = 0
-    pat_list = ['StatementHeader','StatementData','DividendsHeader']
-    pat = re.compile('|'.join(pat_list))
-    with open(in_file,'r') as csvfile:
-        reader = csv.reader(csvfile)
-        for line in reader:
-            if pat.match(line[0]+line[1]):
-                match_count += 1
-    return(match_count)
+# def csv_get_stmnt(in_file):
+#     match_count = 0
+#     pat_list = ['StatementHeader','StatementData','DividendsHeader']
+#     pat = re.compile('|'.join(pat_list))
+#     with open(in_file,'r') as csvfile:
+#         reader = csv.reader(csvfile)
+#         for line in reader:
+#             if pat.match(line[0]+line[1]):
+#                 match_count += 1
+#     return(match_count)
 
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
@@ -120,9 +120,32 @@ def csv_read_2023(infile):
 #                     cur_ask = currency_date_array.get(date, {}).get('ask')
 #                     currency_current = round(currency_to_actual_date(date,currency_to_date_interval),3)
 #                     print(f'%s;%s;%s;%s;%s' %(ticker,date,div_amount,round(float(currency_current)*float(div_amount),2),currency_current))
-                    
+
+
+def currency_convert_to_date(currency, date, currencies_bids):
+    for currencies in currencies_bids:
+        for key in currencies:
+            if key == currency:
+                print(currencies[key])
+                currency_to_date = round(currencies[key]['2022-01-03']['ask'], 3)
+                # print(currencies[key])
+    return(currency_to_date)
+
+def formation_final_report(raw_dividend_list, currencies_bids):
+    divs_list = []
+    for enum, div in enumerate(raw_dividend_list):
+        if enum == 5:
+            break
+        currency = div['currency']
+        date = div['date']
+        div_amount_pln = str(float(div['div_amount']) * float(currency_convert_to_date(currency, date, currencies_bids)))
+        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+    print(divs_list)
+
+
 def main():
     pass
+
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
@@ -130,8 +153,13 @@ if __name__ == '__main__':
         sys.exit(0)
     else:
         in_file = sys.argv[1]
-    # skip_lines = csv_get_stmnt(in_file)
-    # from_date, to_date = get_date_range(in_file,skip_lines)
-    # csv_read(in_file,skip_lines,get_currency_price(from_date, to_date))
+
     # Reading Report and get list of all dividends, and two date of boundaries for Report
     raw_divs_list, from_date, to_date, currencies = csv_read_2023(in_file)
+
+    # Loading the selling rate for each currency found in the report
+    currencies_bids = []
+    for currency in currencies:
+        currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
+        
+    formation_final_report(raw_divs_list, currencies_bids)
