@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+
 import csv
 import re
 from typing import Pattern
@@ -9,17 +10,20 @@ import datetime as dt
 from datetime import datetime
 import sys
 
+
 def get_currency_price(from_date, to_date, currency):
     currency_info = {}
     URL = f'http://api.nbp.pl/api/exchangerates/rates/c/%s/%s/%s' %(currency, from_date, to_date)
+    print(URL)
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
-        for item in data['rates']:
-            effectiveDate = item['effectiveDate']
-            bid = item['bid']
-            ask = item['ask']
-            currency_info[effectiveDate] = {'bid': bid, 'ask': ask}
+        for enum, item in enumerate(data['rates']):
+            currency_info[enum] = {}
+            currency_info[enum]['effectiveDate'] = item['effectiveDate']
+            currency_info[enum]['currency'] = currency
+            currency_info[enum]['ask'] = item['ask']
     return(currency_info)
+
 
 # def get_date_range(in_file,skip_lines):
 #     from_date = ''
@@ -61,11 +65,13 @@ def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
     return(yesterday.strftime("%Y-%m-%d"))
 
+
 def currency_to_actual_date(date,currency_to_date_interval):
     kurs_on_the_actual_date = currency_to_date_interval.get(date, {}).get('ask')
     if kurs_on_the_actual_date == None:
         kurs_on_the_actual_date = currency_to_actual_date(get_yesterday(date),currency_to_date_interval)
     return kurs_on_the_actual_date
+
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency 
 def csv_read_2023(infile):
@@ -126,10 +132,9 @@ def currency_convert_to_date(currency, date, currencies_bids):
     for currencies in currencies_bids:
         for key in currencies:
             if key == currency:
-                print(currencies[key])
                 currency_to_date = round(currencies[key]['2022-01-03']['ask'], 3)
-                # print(currencies[key])
     return(currency_to_date)
+
 
 def formation_final_report(raw_dividend_list, currencies_bids):
     divs_list = []
@@ -140,7 +145,6 @@ def formation_final_report(raw_dividend_list, currencies_bids):
         date = div['date']
         div_amount_pln = str(float(div['div_amount']) * float(currency_convert_to_date(currency, date, currencies_bids)))
         divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
-    print(divs_list)
 
 
 def main():
@@ -160,6 +164,11 @@ if __name__ == '__main__':
     # Loading the selling rate for each currency found in the report
     currencies_bids = []
     for currency in currencies:
-        currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
-        
-    formation_final_report(raw_divs_list, currencies_bids)
+        currencies_bids = get_currency_price(from_date, to_date, currency)
+        # Debug output currencies result list
+        # for item_id, item_data in currencies_bids.items():
+        #     print('\nid:', item_id)
+        #     for key in item_data:
+        #         print(key + ":", item_data[key])
+    print(currencies_bids)
+    # formation_final_report(raw_divs_list, currencies_bids)
