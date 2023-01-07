@@ -16,7 +16,7 @@ How to get dividends report:
 6. Select fields below:
   - Dividiend
   - Payment in Lieu of Dividends
-7. In section "Section Configurations" set swithes in the positions:
+7. In section "Section Configurations" set switches in the positions:
   - Profit and Loss: "MTM and Realized P/L"
   - Breakout Positions into Long and Short? - No
   - Combine by Underlying (MTD/YTD only)? - No
@@ -25,3 +25,7 @@ How to get dividends report:
   - Hide Details for Positions, Trades and Client Fees Sections? - Yes
   - Replace Account ID with Account Alias? - No
   - Display Mailing Address in Account Information Section? - No
+8. In section "Delivery Configuration" set switches in the positions:
+  - Format: CSV
+  - Period: Daily
+  - Language: English
