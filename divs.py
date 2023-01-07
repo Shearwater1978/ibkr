@@ -4,13 +4,11 @@
 
 import csv
 import re
-from typing import Pattern
 import urllib.request
 import json
 import datetime as dt
 from datetime import datetime
 import sys
-import hashlib
 
 
 def get_currency_price(from_date, to_date, currency):
