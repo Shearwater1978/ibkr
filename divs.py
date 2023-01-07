@@ -70,16 +70,13 @@ def csv_read_2023(infile):
 NOPRINT_TRANS_TABLE = {
     i: None for i in range(0, sys.maxunicode + 1) if not chr(i).isprintable()
 }
+
+
 def make_printable(s):
     """Replace non-printable characters in a string."""
     # the translate method on str removes characters
     # that map to None from the string
     return s.translate(NOPRINT_TRANS_TABLE)
-
-
-def get_yesterday(date):
-    yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    return(yesterday.strftime("%Y-%m-%d"))
 
 
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
@@ -93,13 +90,13 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         for key in item_data:
             if make_printable(date) == make_printable(item_data['effectiveDate']):
                 ask = item_data['ask']
-                return(ask)
+                return (ask)
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
     yesterdayDate = get_yesterday(date)
     ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
-    return(ask)
+    return (ask)
 
 
 def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
@@ -107,7 +104,7 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     for enum, div in enumerate(raw_dividend_list):
         currency = div['currency']
         date = div['date']
-        div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
+        div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']), 3))
         divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
     return (divs_list)
 
