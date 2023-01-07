@@ -104,8 +104,6 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
 def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     divs_list = []
     for enum, div in enumerate(raw_dividend_list):
-        # if enum == 999:
-        #     break
         currency = div['currency']
         date = div['date']
         div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
