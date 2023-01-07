@@ -1,0 +1,16 @@
+Statement,Header,Field Name,Field Value
+Statement,Data,BrokerName,Interactive Brokers Central Europe Zrt.
+Statement,Data,BrokerAddress,"Madach Imre ut 13-14, Floor 5, Budapest, 1075, Hungary"
+Statement,Data,Title,Activity Statement
+Statement,Data,Period,"January 1, 2022 - December 31, 2022"
+Statement,Data,WhenGenerated,"2023-01-01, 23:59:59 EST"
+Dividends,Header,Currency,Date,Description,Amount,Code
+Dividends,Data,CAD,2022-09-19,MFC(CA56501R1064) Cash Dividend CAD 0.33 per Share (Ordinary Dividend),1.65,
+Dividends,Data,CAD,2022-12-19,MFC(CA56501R1064) Cash Dividend CAD 0.33 per Share (Ordinary Dividend),1.65,
+Dividends,Data,Total,,,3.3,
+Dividends,Data,Total in USD,,,2.446455,
+Dividends,Data,USD,2022-01-03,M(US55616P1049) Cash Dividend USD 0.15 per Share (Ordinary Dividend),0.15,
+Dividends,Data,USD,2022-01-28,FL(US3448491049) Cash Dividend USD 0.30 per Share (Ordinary Dividend),2.1,
+Dividends,Data,USD,2022-02-01,T(US00206R1023) Cash Dividend USD 0.52 per Share (Ordinary Dividend),1.04,
+Dividends,Data,Total,,,3.29,
+Dividends,Data,Total Dividends in USD,,,3.29,
