@@ -26,52 +26,10 @@ def get_currency_price(from_date, to_date, currency):
     return(currency_info)
 
 
-# def get_date_range(in_file,skip_lines):
-#     from_date = ''
-#     to_date = ''
-#     tmp_date = ''
-#     dates = []
-#     pattern = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}\b'
-#     with open(in_file,'r') as csvfile:
-#         reader = csv.reader(csvfile)
-#         for i in range (0, skip_lines):
-#             next(reader)
-#         for row in reader:
-#             tmp_date = str(row[3])
-#             if row[0] == 'Dividends':
-#                 if row[1] == 'Data':
-#                     if row[2] != 'Total':   
-#                         if re.findall(pattern, str(row[3])):
-#                             dates.append(datetime.strptime(tmp_date, '%Y-%m-%d').date())
-#     sorteddates = [datetime.strftime(ts, "%Y-%m-%d") for ts in dates]
-#     uniquedates = list(dict.fromkeys(sorteddates))
-#     from_date = uniquedates[0]
-#     to_date = uniquedates[-1]
-#     return(from_date, to_date)
-
-# Get lines count for skip when getting didivends
-# def csv_get_stmnt(in_file):
-#     match_count = 0
-#     pat_list = ['StatementHeader','StatementData','DividendsHeader']
-#     pat = re.compile('|'.join(pat_list))
-#     with open(in_file,'r') as csvfile:
-#         reader = csv.reader(csvfile)
-#         for line in reader:
-#             if pat.match(line[0]+line[1]):
-#                 match_count += 1
-#     return(match_count)
-
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
     return(yesterday.strftime("%Y-%m-%d"))
-
-
-def currency_to_actual_date(date,currency_to_date_interval):
-    kurs_on_the_actual_date = currency_to_date_interval.get(date, {}).get('ask')
-    if kurs_on_the_actual_date == None:
-        kurs_on_the_actual_date = currency_to_actual_date(get_yesterday(date),currency_to_date_interval)
-    return kurs_on_the_actual_date
 
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency 
@@ -115,14 +73,18 @@ NOPRINT_TRANS_TABLE = {
 }
 def make_printable(s):
     """Replace non-printable characters in a string."""
-
     # the translate method on str removes characters
     # that map to None from the string
     return s.translate(NOPRINT_TRANS_TABLE)
 
 
+def get_yesterday(date):
+    yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
+    return(yesterday.strftime("%Y-%m-%d"))
+
+
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
-    print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
+    # print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
     for item in currency_index:
         if currency == item['currency']:
@@ -132,26 +94,25 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         for key in item_data:
             if make_printable(date) == make_printable(item_data['effectiveDate']):
                 ask = item_data['ask']
-                break
+                return(ask)
+    '''
+        Detect and hadle situation when date for dividends paid is absent in bank response
+    '''
+    yesterdayDate = get_yesterday(date)
+    ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
     return(ask)
 
 
 def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     divs_list = []
     for enum, div in enumerate(raw_dividend_list):
-        if enum == 5:
+        if enum == 999:
             break
         currency = div['currency']
         date = div['date']
         div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
-        print('Ticker:{} Date:{} Currency:{} Div_Amount:{} Div_Amount_Pln:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount'], div_amount_pln))
-        # print(currency_convert_to_date(currency, date, currencies_bids))
-        # for item_id, item_data in currencies_bids.items():
-        #     print('\nid:', item_id)
-        #     for key in item_data:
-        #         print(key + ":", item_data[key])
-        # div_amount_pln = str(float(div['div_amount']) * float(currency_convert_to_date(currency, date, currencies_bids)))
-        # divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+    return(divs_list)
 
 
 def main():
@@ -181,4 +142,4 @@ if __name__ == '__main__':
     for enum, item in enumerate(currencies_bids):
         for key in item.keys():
             currency_index.append({'currency': key, 'index': enum})
-    formation_final_report(raw_divs_list, currencies_bids, currency_index)
+    print(formation_final_report(raw_divs_list, currencies_bids, currency_index))
