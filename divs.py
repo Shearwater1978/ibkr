@@ -15,13 +15,11 @@ import hashlib
 def get_currency_price(from_date, to_date, currency):
     currency_info = {}
     URL = f'http://api.nbp.pl/api/exchangerates/rates/c/%s/%s/%s' %(currency, from_date, to_date)
-    # print(URL)
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
         for enum, item in enumerate(data['rates']):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
-            # currency_info[enum]['currency'] = currency
             currency_info[enum]['ask'] = item['ask']
     return(currency_info)
 
