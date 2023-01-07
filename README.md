@@ -1,5 +1,5 @@
 # ibkr
-On initial stage current code provide ability for convert dividens from original currency to PLN.
+On actual stage this code provide ability for convert dividens from original currencies to PLN.
 
 How-to:
 1. Get special dividend report
