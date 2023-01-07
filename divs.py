@@ -145,7 +145,6 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         date = div['date']
         div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
         print('Ticker:{} Date:{} Currency:{} Div_Amount:{} Div_Amount_Pln:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount'], div_amount_pln))
-        # print(currencies_bids)
         # print(currency_convert_to_date(currency, date, currencies_bids))
         # for item_id, item_data in currencies_bids.items():
         #     print('\nid:', item_id)
