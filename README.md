@@ -30,7 +30,7 @@ How to set-up dividends report:
   - Period: Daily
   - Language: English
 
-How to get&download dividends report:
+How to formation&download dividends report:
 1. Log-in into IBKR account
 2. Open section "Performance & Report"
 3. Select "Statements"
