@@ -31,7 +31,7 @@ def get_yesterday(date):
     return (yesterday.strftime("%Y-%m-%d"))
 
 
-# Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency 
+# Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency
 def csv_read_2023(infile):
     with open(in_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
