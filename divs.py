@@ -20,7 +20,7 @@ def get_currency_price(from_date, to_date, currency):
         for enum, item in enumerate(data['rates']):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
-            currency_info[enum]['currency'] = currency
+            # currency_info[enum]['currency'] = currency
             currency_info[enum]['ask'] = item['ask']
     return(currency_info)
 
@@ -109,58 +109,38 @@ def csv_read_2023(infile):
     return(raw_divs_list, from_date, to_date, currencies)
 
 
-# def csv_read(in_file,skip_lines,currency_to_date_interval):
-#     currency_date_array = currency_to_date_interval
-#     with open(in_file, newline='') as csvfile:
-#         reader = csv.reader(csvfile)
-#         for i in range (0, skip_lines+1):
-#             next(reader)
-#         print("Ticker;Date;Dividends(USD);Dividends(PLN);Rate(PLN-USD)")
-#         for row in reader:
-#             if str(row[2]) != "Total":
-#                 if str(row[0]) == "Dividends" and str(row[1]) != "Header":
-#                     date = row[3]
-#                     currency = row[2]
-#                     div_amount = row[-2]
-#                     ticker = row[-3].split()[0].split('(')[0]
-#                     cur_ask = currency_date_array.get(date, {}).get('ask')
-#                     currency_current = round(currency_to_actual_date(date,currency_to_date_interval),3)
-#                     print(f'%s;%s;%s;%s;%s' %(ticker,date,div_amount,round(float(currency_current)*float(div_amount),2),currency_current))
-
-
-def currency_convert_to_date(currency, date, currencies_bids):
-    pass
+def currency_convert_to_date(currency, date, currencies_bids, currency_index):
+    print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
+    tmp_index = 0
+    for item in currency_index:
+        if currency == item['currency']:
+            tmp_index = item['index']
+    tmp_curr_ask_list = currencies_bids[tmp_index][currency]
+    
+    for item_id, item_data in tmp_curr_ask_list.items():
+        for key in item_data:
+            print('Currency: {} Date: `{}` EffectiveDate: `{}`'.format(currency, date, item_data['effectiveDate']))
+            if currency == item_data['effectiveDate']:
+                print("---", item_data['effectiveDate'])
+                print("---", item_data['ask'])
+    # for key in currencies_bids[tmp_index]:
+    #     print(currencies_bids[tmp_index][currency])
+    # for item_id, item_data in currencies_bids.items():
+    #     for key in item_data:
+    #         pass
+    # pass
     # print(currencies_bids)
     # for item_id, item_data in currencies_bids.items():
     #     print("--->", item_data['currency'])
-    
-    # for item_id, item_data in currencies_bids.items():
-    #     for key in item_data:
-    #         if currency == item_data['currency']:
-    #             print('If section', item_data['currency'])
-    #             if date == item_data['effectiveDate']:
-    #                 print('Date: {} currency: {} found in Archive currencies'.format(date, currency))
-    #                 return item_data['ask']
-    #             else:
-    #                 print('Date: {} currency: {} not found in Archive currencies'.format(date, currency))
-    #                 return item_data['ask']
-    #         else:
-    #             print('Else section', item_data['currency'])
-            # print(key + ":", item_data[key])
-    # for currencies in currencies_bids:
-    #     for key in currencies:
-    #         if key == currency:
-    #             currency_to_date = round(currencies[key]['2022-01-03']['ask'], 3)
-    # return(currency_to_date)
 
-
-def formation_final_report(raw_dividend_list, currencies_bids):
+def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     divs_list = []
     for enum, div in enumerate(raw_dividend_list):
         if enum == 2:
             break
         currency = div['currency']
         date = div['date']
+        currency_convert_to_date(currency, date, currencies_bids, currency_index)
         print('Ticker:{} Date:{} Currency:{} Div_Amount:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount']))
         # print(currencies_bids)
         # print(currency_convert_to_date(currency, date, currencies_bids))
@@ -188,12 +168,15 @@ if __name__ == '__main__':
 
     # Loading the selling rate for each currency found in the report
     currencies_bids = []
+    currency_index = []
     for currency in currencies:
-        currencies_bids = get_currency_price(from_date, to_date, currency)
+        currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
         # # Debug output currencies result list
         # for item_id, item_data in currencies_bids.items():
         #     print('\nid:', item_id)
         #     for key in item_data:
         #         print(key + ":", item_data[key])
-    print(currencies_bids)
-    formation_final_report(raw_divs_list, currencies_bids)
+    for enum, item in enumerate(currencies_bids):
+        for key in item.keys():
+            currency_index.append({'currency': key, 'index': enum})
+    formation_final_report(raw_divs_list, currencies_bids, currency_index)
