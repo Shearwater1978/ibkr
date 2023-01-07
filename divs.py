@@ -5,7 +5,8 @@
 import csv
 import re
 from typing import Pattern
-import urllib.request, json
+import urllib.request
+import json
 import datetime as dt
 from datetime import datetime
 import sys
@@ -21,13 +22,13 @@ def get_currency_price(from_date, to_date, currency):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
             currency_info[enum]['ask'] = item['ask']
-    return(currency_info)
+    return (currency_info)
 
 
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    return(yesterday.strftime("%Y-%m-%d"))
+    return (yesterday.strftime("%Y-%m-%d"))
 
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency 
@@ -63,7 +64,7 @@ def csv_read_2023(infile):
                     if currency not in currencies:
                         currencies.append(currency)
                     raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount})
-    return(raw_divs_list, from_date, to_date, currencies)
+    return (raw_divs_list, from_date, to_date, currencies)
 
 
 NOPRINT_TRANS_TABLE = {
@@ -108,7 +109,7 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         date = div['date']
         div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
         divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
-    return(divs_list)
+    return (divs_list)
 
 
 def main():
