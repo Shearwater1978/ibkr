@@ -5,7 +5,7 @@ How-to:
 1. Get special dividend report
 2. Execute Python script
 
-How to get dividends report:
+How to set-up dividends report:
 1. Log-in into IBKR account
 2. Open section "Performance & Report"
 3. Select "Statements"
@@ -29,3 +29,19 @@ How to get dividends report:
   - Format: CSV
   - Period: Daily
   - Language: English
+
+How to get&download dividends report:
+1. Log-in into IBKR account
+2. Open section "Performance & Report"
+3. Select "Statements"
+4. Click arrow "Right" opposite the previously created report
+5. In newly pop-up window set accordingly switches:
+  - Period: Custom date range
+  - Set Date range within 2 field From Date & To Date accordinly
+  - Format: CSV
+  - Languge: Check that language English is selected
+6. Push the button "Run" and wait. It can take a lot of time. It depends on the count of records for dividends.
+
+How to run process of calculating dividends in PLN:
+1. Download created report into directory with Python script
+2. Execute script with command: python3 divs.py report.csv
