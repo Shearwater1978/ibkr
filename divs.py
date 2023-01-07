@@ -9,6 +9,7 @@ import urllib.request, json
 import datetime as dt
 from datetime import datetime
 import sys
+import hashlib
 
 
 def get_currency_price(from_date, to_date, currency):
@@ -109,39 +110,41 @@ def csv_read_2023(infile):
     return(raw_divs_list, from_date, to_date, currencies)
 
 
+NOPRINT_TRANS_TABLE = {
+    i: None for i in range(0, sys.maxunicode + 1) if not chr(i).isprintable()
+}
+def make_printable(s):
+    """Replace non-printable characters in a string."""
+
+    # the translate method on str removes characters
+    # that map to None from the string
+    return s.translate(NOPRINT_TRANS_TABLE)
+
+
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
     for item in currency_index:
         if currency == item['currency']:
             tmp_index = item['index']
-    tmp_curr_ask_list = currencies_bids[tmp_index][currency]
-    
-    for item_id, item_data in tmp_curr_ask_list.items():
+    tmp_currency_ask_list = currencies_bids[tmp_index][currency]
+    for item_id, item_data in tmp_currency_ask_list.items():
         for key in item_data:
-            print('Currency: {} Date: `{}` EffectiveDate: `{}`'.format(currency, date, item_data['effectiveDate']))
-            if currency == item_data['effectiveDate']:
-                print("---", item_data['effectiveDate'])
-                print("---", item_data['ask'])
-    # for key in currencies_bids[tmp_index]:
-    #     print(currencies_bids[tmp_index][currency])
-    # for item_id, item_data in currencies_bids.items():
-    #     for key in item_data:
-    #         pass
-    # pass
-    # print(currencies_bids)
-    # for item_id, item_data in currencies_bids.items():
-    #     print("--->", item_data['currency'])
+            if make_printable(date) == make_printable(item_data['effectiveDate']):
+                ask = item_data['ask']
+                break
+    return(ask)
+
 
 def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     divs_list = []
     for enum, div in enumerate(raw_dividend_list):
-        if enum == 2:
+        if enum == 5:
             break
         currency = div['currency']
         date = div['date']
-        currency_convert_to_date(currency, date, currencies_bids, currency_index)
-        print('Ticker:{} Date:{} Currency:{} Div_Amount:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount']))
+        div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']),3))
+        print('Ticker:{} Date:{} Currency:{} Div_Amount:{} Div_Amount_Pln:{}'.format(div['ticker'], div['date'], div['currency'], div['div_amount'], div_amount_pln))
         # print(currencies_bids)
         # print(currency_convert_to_date(currency, date, currencies_bids))
         # for item_id, item_data in currencies_bids.items():
