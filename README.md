@@ -1,3 +1,4 @@
+[![Build Status](https://app.travis-ci.com/Uglykoyote/ibkr.svg?branch=main)](https://app.travis-ci.com/Uglykoyote/ibkr)
 # ibkr
 On actual stage this code provide ability for convert dividens from original currencies to PLN.
 
