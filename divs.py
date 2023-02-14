@@ -81,7 +81,9 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         for key in item_data:
             if make_printable(date) == make_printable(item_data['effectiveDate']):
                 ask = item_data['ask']
-                return (ask)
+            else:
+                ask = item_data['ask']
+            return (ask)
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
@@ -100,16 +102,28 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     return (divs_list)
 
 
+def writing_to_csv(divs, divs_csv_filename):
+    csv_headers = ["Ticket", "Date", "Currency", "DivInCurrency", "DivInPln"]
+    div_content = []
+    with open(divs_csv_filename, "w") as f:
+        w = csv.writer(f, delimiter=",")
+        w.writerow(csv_headers)
+        for div in divs:
+            w = csv.DictWriter(f, div.keys())
+            w.writerow(div)
+
+
 def main():
     pass
 
 
 if __name__ == '__main__':
-    if len(sys.argv) <= 1:
+    if len(sys.argv) <= 2:
         print("Input file missed. Abort")
         sys.exit(0)
     else:
         in_file = sys.argv[1]
+        divs_csv_filename = sys.argv[2]
 
     # Reading Report and get list of all dividends, and two date of boundaries for Report
     raw_divs_list, from_date, to_date, currencies = read_input_csv_file(in_file)
@@ -117,15 +131,12 @@ if __name__ == '__main__':
     # Loading the selling rate for each currency found in the report
     currencies_bids = []
     currency_index = []
-    print(raw_divs_list, from_date, to_date, currencies)
     for currency in currencies:
         currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
-        # # Debug output currencies result list
-        # for item_id, item_data in currencies_bids.items():
-        #     print('\nid:', item_id)
-        #     for key in item_data:
-        #         print(key + ":", item_data[key])
+
     for enum, item in enumerate(currencies_bids):
         for key in item.keys():
             currency_index.append({'currency': key, 'index': enum})
-    print(formation_final_report(raw_divs_list, currencies_bids, currency_index))
+
+    divs_final = formation_final_report(raw_divs_list, currencies_bids, currency_index)
+    writing_to_csv(divs_final, divs_csv_filename)
