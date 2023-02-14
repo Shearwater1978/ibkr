@@ -1,2 +1,3 @@
 divs_*.csv
 U*.csv
+__pycache__/

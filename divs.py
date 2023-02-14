@@ -8,6 +8,7 @@ import urllib.request
 import json
 import datetime as dt
 from datetime import datetime
+from datetime import date as date_new
 import sys
 
 
@@ -26,39 +27,31 @@ def get_currency_price(from_date, to_date, currency):
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
+    print(f'yesterday: {yesterday}')
     return (yesterday.strftime("%Y-%m-%d"))
 
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency
 def csv_read_2023(infile):
+    previous_epoch_year = date_new.today().year - 1
+    from_date = date_new(previous_epoch_year, 1, 1)
+    to_date = date_new(previous_epoch_year, 12, 31)
     with open(in_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         currencies = []
         raw_divs_list = []
         for row in reader:
-            if re.match('Period', str(row[2])):
-                '''
-                    Parse string with Data range of report
-                    Statement,Data,Period,"January 1, 2022 - December 31, 2022"
-                    date_string_to_split: extract Data range in format "January 1, 2022 - December 31, 2022"
-                    from_date_raw: extract period start date in format "January 1, 2022"
-                    to_date: extract period end date in format "December 31, 2022"
-                    from_date,to_date: formatting data into format "2022-01-01"/"2022-12-31"
-                '''
-                date_string_to_split = str(row[3])
-                from_date_raw = date_string_to_split.split('-')[0].strip()
-                to_date_raw = date_string_to_split.split('-')[1].lstrip()
-                from_date = datetime.strptime(from_date_raw, '%B %d, %Y').date().strftime('%Y-%m-%d')
-                to_date = datetime.strptime(to_date_raw, '%B %d, %Y').date().strftime('%Y-%m-%d')
             if not re.match('Total', str(row[2])):
                 '''
                     Read Reports line by line and add each record about Dividends into list of dictionaries
+                    DividendDetail,Data,RevenueComponent,USD,WFC,10375,US,20221201,20221103,,Ordinary Dividend,Qualified - Meets Holding Period,1.8,1.8,1.8,-0.27,-0.27,-0.27,
                 '''
-                if str(row[0]) == "Dividends" and str(row[1]) != "Header":
-                    date = row[3]
-                    currency = row[2].lower()
-                    div_amount = row[-2]
-                    ticker = row[-3].split()[0].split('(')[0]
+                if str(row[0]) == "DividendDetail" and str(row[2]) == "RevenueComponent":
+                    currency = row[3].lower()
+                    ticker = row[4]
+                    date_raw = row[8]
+                    date = datetime.strptime(date_raw, "%Y%m%d").date().strftime('%Y-%m-%d')
+                    div_amount = row[12]
                     if currency not in currencies:
                         currencies.append(currency)
                     raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount})
@@ -124,6 +117,7 @@ if __name__ == '__main__':
     # Loading the selling rate for each currency found in the report
     currencies_bids = []
     currency_index = []
+    print(raw_divs_list, from_date, to_date, currencies)
     for currency in currencies:
         currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
         # # Debug output currencies result list
