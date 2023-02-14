@@ -32,7 +32,7 @@ def get_yesterday(date):
 
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency
-def csv_read_2023(infile):
+def read_input_csv_file(infile):
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         in_file = sys.argv[1]
 
     # Reading Report and get list of all dividends, and two date of boundaries for Report
-    raw_divs_list, from_date, to_date, currencies = csv_read_2023(in_file)
+    raw_divs_list, from_date, to_date, currencies = read_input_csv_file(in_file)
 
     # Loading the selling rate for each currency found in the report
     currencies_bids = []
