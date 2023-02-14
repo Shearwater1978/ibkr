@@ -1,2 +1,2 @@
-divs_*.csv
-U*.csv
+*.csv
+__pycache__/
