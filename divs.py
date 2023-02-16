@@ -98,9 +98,14 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     for enum, div in enumerate(raw_dividend_list):
         currency = div['currency']
         date = div['date']
-        div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']), 3))
+        ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
+        # div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']), 3))
+        div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
         withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
-        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln})
+        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln, 'ask': ask})
+        print(div['ticker'], div['date'], ask)
+        if enum == 5:
+            sys.exit(0)
     return (divs_list)
 
 
