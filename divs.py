@@ -27,7 +27,7 @@ def get_currency_price(from_date, to_date, currency):
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    print(f'yesterday: {yesterday}')
+    # print(f'yesterday: {yesterday}')
     return (yesterday.strftime("%Y-%m-%d"))
 
 
@@ -74,22 +74,34 @@ def make_printable(s):
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     # print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
+    print(currency, date)
     for item in currency_index:
         if currency == item['currency']:
             tmp_index = item['index']
     tmp_currency_ask_list = currencies_bids[tmp_index][currency]
     for item_id, item_data in tmp_currency_ask_list.items():
+        # print(item_id, item_data)
         for key in item_data:
-            if make_printable(date) == make_printable(item_data['effectiveDate']):
+            # if make_printable(date) == make_printable(item_data['effectiveDate']):
+            # print('Date:{}; effectiveDate:{}'.format(date, item_data['effectiveDate']))
+            if date == item_data['effectiveDate']:
                 ask = item_data['ask']
+                # print('If')
+                # print('Ask:{} Date:{}'.format(ask, date))
             else:
-                ask = item_data['ask']
+                # print('Else')
+                yesterdayDate = get_yesterday(date)
+                # print('Previous day:{}'.format(yesterdayDate))
+                ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
+            # else:
+            #     ask = item_data['ask']
+            #     print('Else')
             return (ask)
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
-    yesterdayDate = get_yesterday(date)
-    ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
+    # yesterdayDate = get_yesterday(date)
+    # ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
     return (ask)
 
 
@@ -104,7 +116,7 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
         divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln, 'ask': ask})
         print(div['ticker'], div['date'], ask)
-        if enum == 5:
+        if enum == 2:
             sys.exit(0)
     return (divs_list)
 
