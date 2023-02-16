@@ -46,15 +46,16 @@ def read_input_csv_file(infile):
                     Read Reports line by line and add each record about Dividends into list of dictionaries
                     DividendDetail,Data,RevenueComponent,USD,WFC,10375,US,20221201,20221103,,Ordinary Dividend,Qualified - Meets Holding Period,1.8,1.8,1.8,-0.27,-0.27,-0.27,
                 '''
-                if str(row[0]) == "DividendDetail" and str(row[2]) == "RevenueComponent":
+                if str(row[0]) == "DividendDetail" and str(row[2]) == "Summary":
                     currency = row[3].lower()
                     ticker = row[4]
-                    date_raw = row[8]
+                    date_raw = row[7]
                     date = datetime.strptime(date_raw, "%Y%m%d").date().strftime('%Y-%m-%d')
                     div_amount = row[12]
+                    withholdingtax = abs(float(row[15]))
                     if currency not in currencies:
                         currencies.append(currency)
-                    raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount})
+                    raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount, "withholdingtax": withholdingtax})
     return (raw_divs_list, from_date, to_date, currencies)
 
 
@@ -98,7 +99,8 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         currency = div['currency']
         date = div['date']
         div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']), 3))
-        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+        withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
+        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln})
     return (divs_list)
 
 
