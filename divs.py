@@ -92,7 +92,7 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
             tmp_index = item['index']
     tmp_currency_ask_list = currencies_bids[tmp_index][currency]
     for item_data in tmp_currency_ask_list.values():
-        if date == item_data['effectiveDate']:
+        if make_printable(date) == make_printable(item_data['effectiveDate']):
             ask = find_key(tmp_currency_ask_list, date)
             return (ask)
     '''
