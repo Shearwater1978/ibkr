@@ -110,7 +110,7 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
-        withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
+        withholdingtax_pln = str(round(float(ask) * float(div['withholdingtax']), 3))
         divs_list.append({'ticker': div['ticker'], 
                           'date': div['date'], 
                           'currency': div['currency'], 
