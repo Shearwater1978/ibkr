@@ -31,7 +31,7 @@ def get_yesterday(date):
 
 
 # Read Dividends report file and fill temp array with Ticker, Div amounts and Divs payment date, Currency
-def read_input_csv_file(infile):
+def read_input_csv_file(in_file):
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
@@ -54,7 +54,12 @@ def read_input_csv_file(infile):
                     withholdingtax = abs(float(row[15]))
                     if currency not in currencies:
                         currencies.append(currency)
-                    raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount, "withholdingtax": withholdingtax})
+                    raw_divs_list.append({'ticker': ticker, 
+                                          'date': date, 
+                                          'currency': currency, 
+                                          'div_amount': div_amount, 
+                                          "withholdingtax": withholdingtax
+                                        })
     return (raw_divs_list, from_date, to_date, currencies)
 
 
@@ -72,9 +77,10 @@ def make_printable(s):
 
 def find_key(input_dict, value):
     result = None
-    for idx,values in input_dict.items():
+    for values in input_dict.values():
         if values['effectiveDate'] == value:
             result = values['ask']
+            break
     return result
 
 
@@ -85,11 +91,10 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         if currency == item['currency']:
             tmp_index = item['index']
     tmp_currency_ask_list = currencies_bids[tmp_index][currency]
-    for item_id, item_data in tmp_currency_ask_list.items():
-        for key in item_data:
-            if date == item_data['effectiveDate']:
-                ask = find_key(tmp_currency_ask_list, date)
-                return (ask)
+    for item_data in tmp_currency_ask_list.values():
+        if date == item_data['effectiveDate']:
+            ask = find_key(tmp_currency_ask_list, date)
+            return (ask)
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
@@ -100,19 +105,26 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
 
 def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     divs_list = []
-    for enum, div in enumerate(raw_dividend_list):
+    for div in raw_dividend_list:
         currency = div['currency']
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
         withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
-        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln, 'ask': ask})
+        divs_list.append({'ticker': div['ticker'], 
+                          'date': div['date'], 
+                          'currency': div['currency'], 
+                          'div_amount_in_currency': div['div_amount'], 
+                          'div_amount_in_pln': div_amount_pln, 
+                          'withholdingtax': div['withholdingtax'], 
+                          'withholdingtax_pln': withholdingtax_pln, 
+                          'ask': ask
+                        })
     return (divs_list)
 
 
 def writing_to_csv(divs, divs_csv_filename):
     csv_headers = ['Ticket', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
-    div_content = []
     with open(divs_csv_filename, "w") as f:
         w = csv.writer(f, delimiter=';')
         w.writerow(csv_headers)
