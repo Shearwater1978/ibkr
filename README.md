@@ -18,3 +18,6 @@ How to run process of calculating dividends in PLN:
 2. Execute script with command: python3 ./divs.py Uxxxxx.2022.dividends.csv my_div.csv
 
 Enjoy
+
+How to perform test run:
+1. Execute script with command: python3 ./divs.py test_divs.csv my_test_div.csv
