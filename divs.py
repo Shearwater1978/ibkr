@@ -27,7 +27,6 @@ def get_currency_price(from_date, to_date, currency):
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    print(f'yesterday: {yesterday}')
     return (yesterday.strftime("%Y-%m-%d"))
 
 
@@ -46,15 +45,16 @@ def read_input_csv_file(infile):
                     Read Reports line by line and add each record about Dividends into list of dictionaries
                     DividendDetail,Data,RevenueComponent,USD,WFC,10375,US,20221201,20221103,,Ordinary Dividend,Qualified - Meets Holding Period,1.8,1.8,1.8,-0.27,-0.27,-0.27,
                 '''
-                if str(row[0]) == "DividendDetail" and str(row[2]) == "RevenueComponent":
+                if str(row[0]) == "DividendDetail" and str(row[2]) == "Summary":
                     currency = row[3].lower()
                     ticker = row[4]
-                    date_raw = row[8]
+                    date_raw = row[7]
                     date = datetime.strptime(date_raw, "%Y%m%d").date().strftime('%Y-%m-%d')
                     div_amount = row[12]
+                    withholdingtax = abs(float(row[15]))
                     if currency not in currencies:
                         currencies.append(currency)
-                    raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount})
+                    raw_divs_list.append({'ticker': ticker, 'date': date, 'currency': currency, 'div_amount': div_amount, "withholdingtax": withholdingtax})
     return (raw_divs_list, from_date, to_date, currencies)
 
 
@@ -70,6 +70,14 @@ def make_printable(s):
     return s.translate(NOPRINT_TRANS_TABLE)
 
 
+def find_key(input_dict, value):
+    result = None
+    for idx,values in input_dict.items():
+        if values['effectiveDate'] == value:
+            result = values['ask']
+    return result
+
+
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     # print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
@@ -79,11 +87,9 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     tmp_currency_ask_list = currencies_bids[tmp_index][currency]
     for item_id, item_data in tmp_currency_ask_list.items():
         for key in item_data:
-            if make_printable(date) == make_printable(item_data['effectiveDate']):
-                ask = item_data['ask']
-            else:
-                ask = item_data['ask']
-            return (ask)
+            if date == item_data['effectiveDate']:
+                ask = find_key(tmp_currency_ask_list, date)
+                return (ask)
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
@@ -97,19 +103,21 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     for enum, div in enumerate(raw_dividend_list):
         currency = div['currency']
         date = div['date']
-        div_amount_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['div_amount']), 3))
-        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln})
+        ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
+        div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
+        withholdingtax_pln = str(round(float(currency_convert_to_date(currency, date, currencies_bids, currency_index)) * float(div['withholdingtax']), 3))
+        divs_list.append({'ticker': div['ticker'], 'date': div['date'], 'currency': div['currency'], 'div_amount_in_currency': div['div_amount'], 'div_amount_in_pln': div_amount_pln, 'withholdingtax': div['withholdingtax'], 'withholdingtax_pln': withholdingtax_pln, 'ask': ask})
     return (divs_list)
 
 
 def writing_to_csv(divs, divs_csv_filename):
-    csv_headers = ["Ticket", "Date", "Currency", "DivInCurrency", "DivInPln"]
+    csv_headers = ['Ticket', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
     div_content = []
     with open(divs_csv_filename, "w") as f:
-        w = csv.writer(f, delimiter=",")
+        w = csv.writer(f, delimiter=';')
         w.writerow(csv_headers)
         for div in divs:
-            w = csv.DictWriter(f, div.keys())
+            w = csv.DictWriter(f, div.keys(), delimiter=';')
             w.writerow(div)
 
 
