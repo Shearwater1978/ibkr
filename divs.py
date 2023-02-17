@@ -125,12 +125,21 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
 
 def writing_to_csv(divs, divs_csv_filename):
     csv_headers = ['Ticket', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
+    s = {'c1': '', 'c2': '', 'c3': '', 't_div_amount_in_currency': 0, 't_div_amount_in_pln': 0, 't_withholdingtax': 0, 't_withholdingtax_pln': 0, 'c8': 0}
     with open(divs_csv_filename, "w") as f:
         w = csv.writer(f, delimiter=';')
         w.writerow(csv_headers)
         for div in divs:
             w = csv.DictWriter(f, div.keys(), delimiter=';')
             w.writerow(div)
+            
+            s['t_div_amount_in_currency'] += float(div.get('div_amount_in_currency', 0))
+            s['t_div_amount_in_pln'] += float(div.get('div_amount_in_pln', 0))
+            s['t_withholdingtax'] += float(div.get('withholdingtax', 0))
+            s['t_withholdingtax_pln'] += float(div.get('withholdingtax_pln', 0))
+            
+        w = csv.DictWriter(f, s.keys(), delimiter=';')
+        w.writerow(s)
 
 
 def main():
