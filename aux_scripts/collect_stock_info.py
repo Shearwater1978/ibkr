@@ -36,22 +36,26 @@ def transformDataField(rawRecordWithQuotas):
 
 def read_input_csv_file(in_file):
     stocksArray = []
+    currencies = []
     with open(in_file, newline='') as csvfile:
         readerRows = csv.reader(csvfile)
         for readRow in readerRows:
             if re.match('Trades', str(readRow[0])) and (re.match('O', str(readRow[15])) or re.match('C', str(readRow[15]))):
                 if re.match('Data', str(readRow[1])):
                     readRow[6] = transformDataField(readRow[6])
+                    currency = readRow[4].lower()
+                    if currency not in currencies:
+                        currencies.append(currency.lower())
                     stocksArray.append({
                         'ticker': readRow[5],
-                        'currency': readRow[4],
+                        'currency': currency,
                         'date': readRow[6],
                         'quantity': readRow[7],
                         'withholdingtax': abs(float(readRow[11])),
-                        'profit': abs(float(readRow[13])),
+                        'profit': float(readRow[13]),
                         'order_type': readRow[15]
                     })
-    return stocksArray
+    return stocksArray, currencies
 
 
 def main():
