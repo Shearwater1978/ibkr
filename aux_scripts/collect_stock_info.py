@@ -41,7 +41,6 @@ def read_input_csv_file(in_file):
         for readRow in readerRows:
             if re.match('Trades', str(readRow[0])) and (re.match('O', str(readRow[15])) or re.match('C', str(readRow[15]))):
                 if re.match('Data', str(readRow[1])):
-                    # pass
                     readRow[6] = transformDataField(readRow[6])
                     stocksArray.append({
                         'ticker': readRow[5],
@@ -52,12 +51,12 @@ def read_input_csv_file(in_file):
                         'profit': abs(float(readRow[13])),
                         'order_type': readRow[15]
                     })
-    return (stocksArray)
+    return stocksArray
 
 
 def main():
     collectStockTrades = read_input_csv_file('activities_report.csv')
-    return (collectStockTrades)
+    return collectStockTrades
 
 
 if __name__ == '__main__':
