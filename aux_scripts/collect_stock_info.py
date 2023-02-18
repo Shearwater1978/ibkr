@@ -31,7 +31,6 @@ def transformDataField(rawRecordWithQuotas):
     '''
     removedTimeFromDataField = removeTimeFromDate(rawRecordWithQuotas)
     result = re.sub(r"\"", '', removedTimeFromDataField)
-    print(removedTimeFromDataField)
     return result
 
 
@@ -44,44 +43,21 @@ def read_input_csv_file(in_file):
                 if re.match('Data', str(readRow[1])):
                     # pass
                     readRow[6] = transformDataField(readRow[6])
-                    print(readRow)
                     stocksArray.append({
                         'ticker': readRow[5],
                         'currency': readRow[4],
                         'date': readRow[6],
+                        'quantity': readRow[7],
                         'withholdingtax': abs(float(readRow[11])),
                         'profit': abs(float(readRow[13])),
                         'order_type': readRow[15]
                     })
-                    # print(transformDataField(row))
-    #             '''
-    #                 Read Reports line by line and add each record about Dividends into list of dictionaries
-    #                 DividendDetail,Data,RevenueComponent,USD,WFC,10375,US,20221201,20221103,,Ordinary Dividend,Qualified - Meets Holding Period,1.8,1.8,1.8,-0.27,-0.27,-0.27,
-    #             '''
-    #             if str(row[0]) == "DividendDetail" and str(row[2]) == "Summary":
-    #                 currency = row[3].lower()
-    #                 ticker = row[4]
-    #                 date_raw = row[7]
-    #                 date = datetime.strptime(date_raw, "%Y%m%d").date().strftime('%Y-%m-%d')
-    #                 div_amount = row[12]
-    #                 withholdingtax = abs(float(row[15]))
-    #                 if currency not in currencies:
-    #                     currencies.append(currency)
-    #                 raw_divs_list.append({'ticker': ticker, 
-    #                                       'date': date, 
-    #                                       'currency': currency, 
-    #                                       'div_amount': div_amount, 
-    #                                       "withholdingtax": withholdingtax
-    #                                     })
     return (stocksArray)
 
 
 def main():
     collectStockTrades = read_input_csv_file('activities_report.csv')
-    print(collectStockTrades)
-    # rawRecordLine = 'Trades,Data,Order,Stocks,USD,MSFT,"2022-09-01, 10:48:07",-1,256.065,260.4,256.065,-1.005993888,-244.61,10.449006,-4.335,C'
-    # rawRecordLine = 'Trades,Data,Order,Stocks,USD,KR,"2022-04-21, 10:37:15",2,57.538,58.18,-115.076,-1,116.076,0,1.284,O'
-    # print(transformDataField(rawRecordLine))
+    return (collectStockTrades)
 
 
 if __name__ == '__main__':
