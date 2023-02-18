@@ -11,6 +11,7 @@ from datetime import datetime
 from datetime import date as date_new
 import sys
 import aux_scripts.collect_stock_info as stockcalculation
+import aux_scripts.writer_to_xls as writertoexcell
 
 
 def get_currency_price(from_date, to_date, currency):
@@ -253,4 +254,8 @@ if __name__ == '__main__':
     currency_index = getCurrencyIndex(currencies_bids)
             
     stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
-    writingStockFile(stockFinalReport, stock_csv_filename)
+    stockHeaders = ['Ticker', 'Date', 'Currency', 'Quantity', 'TaxInCurrency', 'TaxInPln', 'ProfitInCurrency', 'ProfitInPln', 'OrderType', 'ExchangeRateToDate']
+    # writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dict)
+    writertoexcell.writeWorkSheet('ibkr_report.xls', stockFinalReport, 'stocks', stockHeaders)
+    # print(stockFinalReport)
+    # writingStockFile(stockFinalReport, stock_csv_filename)
