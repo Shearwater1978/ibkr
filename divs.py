@@ -246,7 +246,9 @@ if __name__ == '__main__':
     currency_index = getCurrencyIndex(currencies_bids)
 
     divs_final = formation_final_report(raw_divs_list, currencies_bids, currency_index)
-    writing_to_csv(divs_final, divs_csv_filename)
+    divsHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
+    writertoexcell.writeWorkSheet('ibkr_report.xls', divs_final, 'divs', divsHeaders)
+    # writing_to_csv(divs_final, divs_csv_filename)
 
     # Work with stock
     rawStocks, currencies = stockcalculation.read_input_csv_file('activities_report.csv')
