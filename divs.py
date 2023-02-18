@@ -10,6 +10,7 @@ import datetime as dt
 from datetime import datetime
 from datetime import date as date_new
 import sys
+import aux_scripts.collect_stock_info as stockcalculation
 
 
 def get_currency_price(from_date, to_date, currency):
@@ -123,8 +124,33 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
     return (divs_list)
 
 
+def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
+    stockList = []
+    for rawStock in rawStocks:
+        currency = rawStock['currency']
+        date = rawStock['date']
+        ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
+        # div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
+        withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
+        profit_pln = round(float(ask) * float(rawStock['profit']), 3)
+        # print('{}: {}: {}:'.format(rawStock['ticker'], rawStock['profit'], profit_pln))
+        stockList.append({
+            'ticker': rawStock['ticker'], 
+            'date': rawStock['date'], 
+            'currency': rawStock['currency'],
+            'quantity': rawStock['quantity'],
+            'withholdingtax': rawStock['withholdingtax'], 
+            'withholdingtax_pln': withholdingtax_pln, 
+            'profit': rawStock['profit'],
+            'profit_pln': profit_pln,
+            'order_type': rawStock['order_type'],
+            'ask': ask
+        })
+    return stockList
+
+
 def writing_to_csv(divs, divs_csv_filename):
-    csv_headers = ['Ticket', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
+    csv_headers = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
     s = {'c1': '', 'c2': '', 'c3': '', 't_div_amount_in_currency': 0, 't_div_amount_in_pln': 0, 't_withholdingtax': 0, 't_withholdingtax_pln': 0, 'c8': 0}
     with open(divs_csv_filename, "w") as f:
         w = csv.writer(f, delimiter=';')
@@ -142,6 +168,62 @@ def writing_to_csv(divs, divs_csv_filename):
         w.writerow(s)
 
 
+def writingStockFile(stocks, stock_csv_filename):
+    csv_headers = [
+        'Ticker',               # c1
+        'Date',                 # c2
+        'Currency',             # c3
+        'Quantity',             # c4
+        'TaxInCurrency',        # t_withholdingtax
+        'TaxInPln',             # t_withholdingtax_pln
+        'ProfitInCurrency',     # t_profitincurrency
+        'ProfitInPln',          # t_profit_pln
+        'OrderType',            # c9
+        'ExchangeRateToDate'    # c10
+    ]
+    s = {
+        'c1': '',
+        'c2': '',
+        'c3': '',
+        'c4': '',
+        't_withholdingtax': 0,
+        't_withholdingtax_pln': 0,
+        't_profitincurrency': 0,
+        't_profit_pln': 0,
+        'c9': '',
+        'c10': ''
+    }
+    with open(stock_csv_filename, "w") as f:
+        w = csv.writer(f, delimiter=';')
+        w.writerow(csv_headers)
+        for stock in stocks:
+            w = csv.DictWriter(f, stock.keys(), delimiter=';')
+            w.writerow(stock)
+            
+            s['t_withholdingtax'] += float(stock.get('withholdingtax', 0))
+            s['t_withholdingtax_pln'] += float(stock.get('withholdingtax_pln', 0))
+            s['t_profitincurrency'] += float(stock.get('profit', 0))
+            s['t_profit_pln'] += float(stock.get('profit_pln', 0))
+            
+        w = csv.DictWriter(f, s.keys(), delimiter=';')
+        w.writerow(s)
+
+
+def getCurrencieBids(currencies):
+    currencies_bids = []
+    for currency in currencies:
+        currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
+    return currencies_bids
+
+
+def getCurrencyIndex(currencies_bids):
+    currency_index = []
+    for enum, item in enumerate(currencies_bids):
+        for key in item.keys():
+            currency_index.append({'currency': key, 'index': enum})
+    return currency_index
+
+
 def main():
     pass
 
@@ -153,19 +235,22 @@ if __name__ == '__main__':
     else:
         in_file = sys.argv[1]
         divs_csv_filename = sys.argv[2]
+        stock_csv_filename = sys.argv[3]
 
     # Reading Report and get list of all dividends, and two date of boundaries for Report
     raw_divs_list, from_date, to_date, currencies = read_input_csv_file(in_file)
-
+    
     # Loading the selling rate for each currency found in the report
-    currencies_bids = []
-    currency_index = []
-    for currency in currencies:
-        currencies_bids.append({currency: get_currency_price(from_date, to_date, currency)})
-
-    for enum, item in enumerate(currencies_bids):
-        for key in item.keys():
-            currency_index.append({'currency': key, 'index': enum})
+    currencies_bids = getCurrencieBids(currencies)
+    currency_index = getCurrencyIndex(currencies_bids)
 
     divs_final = formation_final_report(raw_divs_list, currencies_bids, currency_index)
     writing_to_csv(divs_final, divs_csv_filename)
+
+    # Work with stock
+    rawStocks, currencies = stockcalculation.read_input_csv_file('activities_report.csv')
+    currencies_bids = getCurrencieBids(currencies)
+    currency_index = getCurrencyIndex(currencies_bids)
+            
+    stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
+    writingStockFile(stockFinalReport, stock_csv_filename)
