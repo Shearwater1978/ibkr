@@ -187,7 +187,7 @@ if __name__ == '__main__':
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divTaxFinalReport = formationDivTaxFinalReport(rawDivsTax, currencies_bids, currency_index)
-    divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'ExchangeRateToDate']
-    writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divIncomeHeaders)
+    divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivTaxInCurrency', 'DivTaxInPln', 'ExchangeRateToDate']
+    writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divTaxHeaders)
     
     writertoexcell.unionDivsStocksXls()
