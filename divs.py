@@ -10,8 +10,10 @@ import datetime as dt
 from datetime import datetime
 from datetime import date as date_new
 import sys
-import aux_scripts.collect_stock_info as stockcalculation
 import aux_scripts.writer_to_xls as writertoexcell
+import aux_scripts.collect_stock_info as stockcalculation
+import aux_scripts.collect_divs_income_info as divscalculation
+import aux_scripts.collect_divs_tax_info as divtaxcalculation
 
 
 def get_currency_price(from_date, to_date, currency):
@@ -111,12 +113,12 @@ def formation_final_report(raw_dividend_list, currencies_bids, currency_index):
         currency = div['currency']
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
-        div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
-        withholdingtax_pln = str(round(float(ask) * float(div['withholdingtax']), 3))
+        div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
+        withholdingtax_pln = round(float(ask) * float(div['withholdingtax']), 3)
         divs_list.append({'ticker': div['ticker'], 
                           'date': div['date'], 
                           'currency': div['currency'], 
-                          'div_amount_in_currency': div['div_amount'], 
+                          'div_amount_in_currency': float(div['div_amount']), 
                           'div_amount_in_pln': div_amount_pln, 
                           'withholdingtax': div['withholdingtax'], 
                           'withholdingtax_pln': withholdingtax_pln, 
@@ -247,17 +249,16 @@ if __name__ == '__main__':
 
     divs_final = formation_final_report(raw_divs_list, currencies_bids, currency_index)
     divsHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'TaxInCurrency', 'TaxInPln', 'ExchangeRateToDate']
-    writertoexcell.writeWorkSheet('ibkr_report.xls', divs_final, 'divs', divsHeaders)
+    writertoexcell.writeWorkSheet('ibkr_report_divs.xls', divs_final, 'divs', divsHeaders)
     # writing_to_csv(divs_final, divs_csv_filename)
 
     # Work with stock
     rawStocks, currencies = stockcalculation.read_input_csv_file('activities_report.csv')
     currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
-            
+    currency_index = getCurrencyIndex(currencies_bids)     
     stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
     stockHeaders = ['Ticker', 'Date', 'Currency', 'Quantity', 'TaxInCurrency', 'TaxInPln', 'ProfitInCurrency', 'ProfitInPln', 'OrderType', 'ExchangeRateToDate']
-    # writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dict)
-    writertoexcell.writeWorkSheet('ibkr_report.xls', stockFinalReport, 'stocks', stockHeaders)
-    # print(stockFinalReport)
+    writertoexcell.writeWorkSheet('ibkr_report_stocks.xls', stockFinalReport, 'stocks', stockHeaders)
     # writingStockFile(stockFinalReport, stock_csv_filename)
+    
+    writertoexcell.unionDivsStocksXls()
