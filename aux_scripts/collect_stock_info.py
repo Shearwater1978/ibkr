@@ -51,7 +51,7 @@ def read_input_csv_file(in_file):
                         'currency': currency,
                         'date': readRow[6],
                         'quantity': readRow[7],
-                        'withholdingtax': abs(float(readRow[11])),
+                        'withholdingtax': float(readRow[11]),
                         'profit': float(readRow[13]),
                         'order_type': readRow[15]
                     })
