@@ -167,7 +167,7 @@ if __name__ == '__main__':
 
 
     # Work with stock
-    rawStocks, currencies = stockcalculation.read_input_csv_file('activities_report.csv')
+    rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     writertoexcell.writeWorkSheet('ibkr_report_stocks.xls', stockFinalReport, 'stocks', stockHeaders)
 
     # Work with div income
-    rawDivs, currencies = divscalculation.read_input_csv_file('activities_report.csv')
+    rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divIncomeFinalReport = formationDivIncomeFinalReport(rawDivs, currencies_bids, currency_index)
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     writertoexcell.writeWorkSheet('ibkr_report_div_income.xls', divIncomeFinalReport, 'divincome', divIncomeHeaders)
     
     # Work with div tax
-    rawDivsTax, currencies = divtaxcalculation.read_input_csv_file('activities_report.csv')
+    rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divTaxFinalReport = formationDivTaxFinalReport(rawDivsTax, currencies_bids, currency_index)

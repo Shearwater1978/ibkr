@@ -44,22 +44,6 @@ def unionDivsStocksXls():
     ws1 = wb.add_worksheet('stocks')
     ws2 = wb.add_worksheet('divsicome')
     ws3 = wb.add_worksheet('divstax')
-
-    mainPandas.at[1, 'Тип актива'] = 'Акции. Доход/Убыток'
-    mainPandas.at[1, 'Сумма в валюте'] = round(stocksPandas['ProfitInCurrency'].sum(), 3)
-    mainPandas.at[1, 'Сумма в злотых'] = round(stocksPandas['ProfitInPln'].sum(), 3)
-    
-    mainPandas.at[2, 'Тип актива'] = 'Акции. Комиссия'
-    mainPandas.at[2, 'Сумма в валюте'] = round(stocksPandas['TaxInCurrency'].sum(), 3)
-    mainPandas.at[2, 'Сумма в злотых'] = round(stocksPandas['TaxInPln'].sum(), 3)
-    
-    mainPandas.at[3, 'Тип актива'] = 'Дивиденды. Доход'
-    mainPandas.at[3, 'Сумма в валюте'] = round(divsIncomePandas['DivInCurrency'].sum(), 3)
-    mainPandas.at[3, 'Сумма в злотых'] = round(divsIncomePandas['DivInPln'].sum(), 3)
-    
-    mainPandas.at[4, 'Тип актива'] = 'Дивиденды. Комиссия'
-    mainPandas.at[4, 'Сумма в валюте'] = round(divsTaxPandas['DivTaxInCurrency'].sum(), 3)
-    mainPandas.at[4, 'Сумма в злотых'] = round(divsTaxPandas['DivTaxInPln'].sum(), 3)
     
     mainPandas.at[1, 'Asset type'] = 'Stocks. Profit/Lose'
     mainPandas.at[1, 'Amount in currency'] = round(stocksPandas['ProfitInCurrency'].sum(), 3)
@@ -73,7 +57,7 @@ def unionDivsStocksXls():
     mainPandas.at[3, 'Amount in currency'] = round(divsIncomePandas['DivInCurrency'].sum(), 3)
     mainPandas.at[3, 'Amount in pln'] = round(divsIncomePandas['DivInPln'].sum(), 3)
     
-    mainPandas.at[4, 'Asset type'] = 'Dividends. Fees'
+    mainPandas.at[4, 'Asset type'] = 'Dividends. Tax'
     mainPandas.at[4, 'Amount in currency'] = round(divsTaxPandas['DivTaxInCurrency'].sum(), 3)
     mainPandas.at[4, 'Amount in pln'] = round(divsTaxPandas['DivTaxInPln'].sum(), 3)
     
