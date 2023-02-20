@@ -165,7 +165,6 @@ if __name__ == '__main__':
     else:
         in_file = sys.argv[1]
 
-
     # Work with stock
     rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
@@ -190,4 +189,5 @@ if __name__ == '__main__':
     divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivTaxInCurrency', 'DivTaxInPln', 'ExchangeRateToDate']
     writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divTaxHeaders)
     
+    # Agregate all xls files into one
     writertoexcell.unionDivsStocksXls()
