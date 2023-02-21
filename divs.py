@@ -66,7 +66,8 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
             tmp_index = item['index']
     tmp_currency_ask_list = currencies_bids[tmp_index][currency]
     for item_data in tmp_currency_ask_list.values():
-        if make_printable(date) == make_printable(item_data['effectiveDate']):
+        # if make_printable(date) == make_printable(item_data['effectiveDate']):
+        if date == item_data['effectiveDate']:
             ask = find_key(tmp_currency_ask_list, date)
             return (ask)
     '''
@@ -81,12 +82,10 @@ def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
     stockList = []
     for rawStock in rawStocks:
         currency = rawStock['currency']
-        date = rawStock['date']
+        date = getYesterday(rawStock['date'])
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
-        # div_amount_pln = str(round(float(ask) * float(div['div_amount']), 3))
         withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
         profit_pln = round(float(ask) * float(rawStock['profit']), 3)
-        # print('{}: {}: {}:'.format(rawStock['ticker'], rawStock['profit'], profit_pln))
         stockList.append({
             'ticker': rawStock['ticker'], 
             'date': rawStock['date'], 
