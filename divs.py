@@ -21,13 +21,13 @@ def getCurrencyExchangeRate(from_date, to_date, currency):
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
     currency_info = {}
-    URL = f'http://api.nbp.pl/api/exchangerates/rates/c/{currency}/{from_date}/{to_date}'
+    URL = f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{from_date}/{to_date}'
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
         for enum, item in enumerate(data['rates']):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
-            currency_info[enum]['ask'] = item['ask']
+            currency_info[enum]['mid'] = item['mid']
     return (currency_info)
 
 
@@ -53,7 +53,7 @@ def find_key(input_dict, value):
     result = None
     for values in input_dict.values():
         if values['effectiveDate'] == value:
-            result = values['ask']
+            result = values['mid']
             break
     return result
 
