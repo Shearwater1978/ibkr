@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -73,6 +73,7 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
+    
     yesterdayDate = getYesterday(date)
     ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
     return (ask)
@@ -126,11 +127,11 @@ def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_inde
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_tax_amount']), 3)
         divs_list.append({'ticker': div['ticker'], 
-                          'date': div['date'], 
-                          'currency': div['currency'], 
-                          'div_tax_amount_in_currency': float(div['div_tax_amount']), 
-                          'div_tax_amount_in_pln': div_amount_pln,
-                          'ask': ask
+                        'date': div['date'], 
+                        'currency': div['currency'], 
+                        'div_tax_amount_in_currency': float(div['div_tax_amount']), 
+                        'div_tax_amount_in_pln': div_amount_pln,
+                        'ask': ask
                         })
     return (divs_list)
 
@@ -165,28 +166,36 @@ if __name__ == '__main__':
         in_file = sys.argv[1]
 
     # Work with stock
+    print('Start calculate Stocks')
     rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
     stockHeaders = ['Ticker', 'Date', 'Currency', 'Quantity', 'TaxInCurrency', 'TaxInPln', 'ProfitInCurrency', 'ProfitInPln', 'OrderType', 'ExchangeRateToDate']
+    print('>> writertoexcell <<')
     writertoexcell.writeWorkSheet('ibkr_report_stocks.xls', stockFinalReport, 'stocks', stockHeaders)
 
     # Work with div income
+    print('Start calculate Div income')
     rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divIncomeFinalReport = formationDivIncomeFinalReport(rawDivs, currencies_bids, currency_index)
     divIncomeHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'ExchangeRateToDate']
+    print('>> writertoexcell <<')
     writertoexcell.writeWorkSheet('ibkr_report_div_income.xls', divIncomeFinalReport, 'divincome', divIncomeHeaders)
     
     # Work with div tax
+    print('Start calculate Div tax')
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
+    currencies_bids = getCurrencieBids(currencies)    
     currency_index = getCurrencyIndex(currencies_bids)
     divTaxFinalReport = formationDivTaxFinalReport(rawDivsTax, currencies_bids, currency_index)
     divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivTaxInCurrency', 'DivTaxInPln', 'ExchangeRateToDate']
+    print('>> writertoexcell <<')
     writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divTaxHeaders)
     
     # Agregate all xls files into one
+    print('Start final task')
+    print('>> writertoexcell <<')
     writertoexcell.unionDivsStocksXls()
