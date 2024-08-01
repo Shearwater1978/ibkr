@@ -92,7 +92,6 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
-    
     yesterdayDate = getYesterday(date)
     ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
     return ask
@@ -131,8 +130,8 @@ def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_i
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
         divs_list.append({'ticker': div['ticker'], 
-                          'date': div['date'], 
-                          'currency': div['currency'], 
+                          'date': div['date'],
+                          'currency': div['currency'],
                           'div_amount_in_currency': float(div['div_amount']), 
                           'div_amount_in_pln': div_amount_pln,
                           'ask': ask
