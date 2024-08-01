@@ -123,7 +123,8 @@ def formation_div_income_final_report(raw_dividend_list, currencies_bids, curren
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
-        divs_list.append({'ticker': div['ticker'],
+        divs_list.append({
+            'ticker': div['ticker'],
             'date': div['date'],
             'currency': div['currency'],
             'div_amount_in_currency': float(div['div_amount']),
@@ -140,7 +141,8 @@ def formation_div_tax_final_report(raw_dividend_list, currencies_bids, currency_
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_tax_amount']), 3)
-        divs_list.append({'ticker': div['ticker'],
+        divs_list.append({
+            'ticker': div['ticker'],
             'date': div['date'],
             'currency': div['currency'],
             'div_tax_amount_in_currency': float(div['div_tax_amount']),

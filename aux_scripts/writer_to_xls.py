@@ -53,7 +53,7 @@ def unionDivsStocksXls():
     mainPandas.at[2, 'Asset type'] = 'Stocks IB. Fees'
     mainPandas.at[2, 'Amount in currency'] = round(stocksPandas['TaxInCurrency'].sum(), 3)
     mainPandas.at[2, 'Amount in pln'] = round(stocksPandas['TaxInPln'].sum(), 3)
-    
+
     mainPandas.at[3, 'Asset type'] = 'Dividends IB. Profit'
     mainPandas.at[3, 'Amount in currency'] = round(divsIncomePandas['DivInCurrency'].sum(), 3)
     mainPandas.at[3, 'Amount in pln'] = round(divsIncomePandas['DivInPln'].sum(), 3)
