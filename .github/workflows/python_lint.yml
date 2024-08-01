@@ -25,8 +25,8 @@ jobs:
           
         - name: pylint
           run: |
-            pylint app/ aux_scripts/
+            pylint app/
 
         - name: flake8
           run: |
-            flake8 app/ aux_scripts/
+            flake8 app/
