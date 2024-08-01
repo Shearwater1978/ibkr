@@ -30,13 +30,13 @@ def writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dic
     workbook.close()
 
 
-def unionDivsStocksXls(ibkr_report_stocks_is_exist):
+def unionDivsStocksXls():
     headers = ['Asset type', 'Amount in currency', 'Amount in pln']
 
     mainPandas = pd.DataFrame(columns = headers)
     stocksPandas = pd.DataFrame()
     divsIncomePandas = pd.DataFrame()
-    if ibkr_report_stocks_is_exist:
+    if os.path.isfile('ibkr_report_stocks.xls') and os.access('ibkr_report_stocks.xls', os.R_OK):
         stocksPandas = pd.read_excel('ibkr_report_stocks.xls', sheet_name=0, index_col=0, header=1)
     divsIncomePandas = pd.read_excel('ibkr_report_div_income.xls', sheet_name=0, index_col=0, header=1)
     divsTaxPandas = pd.read_excel('ibkr_report_div_tax.xls', sheet_name=0, index_col=0, header=1)
@@ -47,7 +47,7 @@ def unionDivsStocksXls(ibkr_report_stocks_is_exist):
     ws2 = wb.add_worksheet('divsicome')
     ws3 = wb.add_worksheet('divstax')
 
-    if ibkr_report_stocks_is_exist:
+    if os.path.isfile('ibkr_report_stocks.xls') and os.access('ibkr_report_stocks.xls', os.R_OK):
         mainPandas.at[1, 'Asset type'] = 'Stocks IB. Profit/Lose'
         mainPandas.at[1, 'Amount in currency'] = round(stocksPandas['ProfitInCurrency'].sum(), 3)
         mainPandas.at[1, 'Amount in pln'] = round(stocksPandas['ProfitInPln'].sum(), 3)
@@ -66,13 +66,13 @@ def unionDivsStocksXls(ibkr_report_stocks_is_exist):
 
     with pd.ExcelWriter('ibkr_report_joint.xlsx') as writer:
         mainPandas.to_excel(writer, sheet_name='main', index=False)
-        if ibkr_report_stocks_is_exist:
+        if os.path.isfile('ibkr_report_stocks.xls') and os.access('ibkr_report_stocks.xls', os.R_OK):
             stocksPandas.to_excel(writer, sheet_name='stocks', index=False)
         divsIncomePandas.to_excel(writer, sheet_name='divsincome', index=False)
         divsTaxPandas.to_excel(writer, sheet_name='divtax', index=False)
 
     # Remove single xls file
-    if ibkr_report_stocks_is_exist:
+    if os.path.isfile('ibkr_report_stocks.xls') and os.access('ibkr_report_stocks.xls', os.R_OK):
         os.remove('ibkr_report_stocks.xls')
     os.remove('ibkr_report_div_income.xls')
     os.remove('ibkr_report_div_tax.xls')
