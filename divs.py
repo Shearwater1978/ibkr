@@ -36,8 +36,8 @@ def get_currency_exchange_rate(from_date, to_date, currency):
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
     currency_info = {}
-    URL = f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{from_date}/{to_date}'
-    with urllib.request.urlopen(URL) as url:
+    url = f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{from_date}/{to_date}'
+    with urllib.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
         for enum, item in enumerate(data['rates']):
             currency_info[enum] = {}
@@ -95,25 +95,25 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     return ask
 
 
-def formation_stock_final_report(rawStocks, currencies_bids, currency_index):
+def formation_stock_final_report(raw_stocks, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     stockList = []
-    for rawStock in rawStocks:
-        currency = rawStock['currency']
-        date = get_yesterday(rawStock['date'])
+    for raw_stock in raw_stocks:
+        currency = raw_stock['currency']
+        date = get_yesterday(raw_stock['date'])
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
-        withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
-        profit_pln = round(float(ask) * float(rawStock['profit']), 3)
+        withholdingtax_pln = round(float(ask) * float(raw_stock['withholdingtax']), 3)
+        profit_pln = round(float(ask) * float(raw_stock['profit']), 3)
         stockList.append({
-            'ticker': rawStock['ticker'],
-            'date': rawStock['date'],
-            'currency': rawStock['currency'],
-            'quantity': rawStock['quantity'],
-            'withholdingtax': rawStock['withholdingtax'],
+            'ticker': raw_stock['ticker'],
+            'date': raw_stock['date'],
+            'currency': raw_stock['currency'],
+            'quantity': raw_stock['quantity'],
+            'withholdingtax': raw_stock['withholdingtax'],
             'withholdingtax_pln': withholdingtax_pln,
-            'profit': rawStock['profit'],
+            'profit': raw_stock['profit'],
             'profit_pln': profit_pln,
-            'order_type': rawStock['order_type'],
+            'order_type': raw_stock['order_type'],
             'ask': ask
         })
     return stockList
@@ -189,10 +189,10 @@ if __name__ == '__main__':
     # Work with stock
     MSG_START = 'Start calculate Stocks'
     logger.info(MSG_START)
-    rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
+    raw_stocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = get_currencie_bids(currencies)
     currency_index = get_currency_index(currencies_bids)
-    stockFinalReport = formation_stock_final_report(rawStocks, currencies_bids, currency_index)
+    stockFinalReport = formation_stock_final_report(raw_stocks, currencies_bids, currency_index)
     stockHeaders = [
         'Ticker',
         'Date',
