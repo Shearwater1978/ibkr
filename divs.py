@@ -110,8 +110,7 @@ def formation_stock_final_report(raw_stocks, currencies_bids, currency_index):
             'profit': raw_stock['profit'],
             'profit_pln': profit_pln,
             'order_type': raw_stock['order_type'],
-            'ask': ask
-        })
+            'ask': ask})
     return stock_list
 
 
@@ -128,8 +127,7 @@ def formation_div_income_final_report(raw_dividend_list, currencies_bids, curren
                           'currency': div['currency'],
                           'div_amount_in_currency': float(div['div_amount']),
                           'div_amount_in_pln': div_amount_pln,
-                          'ask': ask
-                        })
+                          'ask': ask})
     return divs_list
 
 
@@ -146,8 +144,7 @@ def formation_div_tax_final_report(raw_dividend_list, currencies_bids, currency_
                         'currency': div['currency'],
                         'div_tax_amount_in_currency': float(div['div_tax_amount']),
                         'div_tax_amount_in_pln': div_amount_pln,
-                        'ask': ask
-                        })
+                        'ask': ask})
     return divs_list
 
 

@@ -36,5 +36,6 @@ def main():
     divTaxArray, currencies = read_input_csv_file('activities_report.csv')
     print(divTaxArray)
 
+
 if __name__ == '__main__':
     main()

@@ -35,5 +35,6 @@ def main():
     divsIncomeArray, currencies = read_input_csv_file('activities_report.csv')
     print(raw_divs_list)
 
+
 if __name__ == '__main__':
     main()

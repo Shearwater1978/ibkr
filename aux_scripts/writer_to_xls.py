@@ -3,6 +3,7 @@ import pandas as pd
 from pandas import ExcelWriter
 import os
 
+
 def createTempAlphabet(headersLen: int):
     alphabet = []
     initialAlphabetRange = 98
@@ -31,20 +32,20 @@ def writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dic
 
 def unionDivsStocksXls():
     headers = [ 'Asset type', 'Amount in currency', 'Amount in pln' ]
-    
+
     mainPandas = pd.DataFrame(columns = headers)
     stocksPandas = pd.DataFrame()
     divsIncomePandas = pd.DataFrame()
     stocksPandas = pd.read_excel('ibkr_report_stocks.xls', sheet_name=0, index_col=0, header=1)
     divsIncomePandas = pd.read_excel('ibkr_report_div_income.xls', sheet_name=0, index_col=0, header=1)
     divsTaxPandas = pd.read_excel('ibkr_report_div_tax.xls', sheet_name=0, index_col=0, header=1)
-    
+
     wb = xlsxwriter.Workbook()
     ws0 = wb.add_worksheet('main')
     ws1 = wb.add_worksheet('stocks')
     ws2 = wb.add_worksheet('divsicome')
     ws3 = wb.add_worksheet('divstax')
-    
+
     mainPandas.at[1, 'Asset type'] = 'Stocks IB. Profit/Lose'
     mainPandas.at[1, 'Amount in currency'] = round(stocksPandas['ProfitInCurrency'].sum(), 3)
     mainPandas.at[1, 'Amount in pln'] = round(stocksPandas['ProfitInPln'].sum(), 3)
@@ -60,19 +61,19 @@ def unionDivsStocksXls():
     mainPandas.at[4, 'Asset type'] = 'Dividends IB. Tax'
     mainPandas.at[4, 'Amount in currency'] = round(divsTaxPandas['DivTaxInCurrency'].sum(), 3)
     mainPandas.at[4, 'Amount in pln'] = round(divsTaxPandas['DivTaxInPln'].sum(), 3)
-    
+
     with pd.ExcelWriter('ibkr_report_joint.xlsx') as writer:
         mainPandas.to_excel(writer, sheet_name='main', index=False)
         stocksPandas.to_excel(writer, sheet_name='stocks', index=False)
         divsIncomePandas.to_excel(writer, sheet_name='divsincome', index=False)
         divsTaxPandas.to_excel(writer, sheet_name='divtax', index=False)
-    
+
     # Remove single xls file
     os.remove('ibkr_report_stocks.xls')
     os.remove('ibkr_report_div_income.xls')
     os.remove('ibkr_report_div_tax.xls')
 
-            
+
 def main():
     pass
 
