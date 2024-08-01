@@ -44,6 +44,7 @@ def get_currency_exchange_rate(from_date, to_date, currency):
             currency_info[enum]['mid'] = item['mid']
     return currency_info
 
+
 # Move to one day in past, if rate absent to date
 def get_yesterday(date):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
@@ -123,11 +124,11 @@ def formation_div_income_final_report(raw_dividend_list, currencies_bids, curren
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
         divs_list.append({'ticker': div['ticker'],
-                          'date': div['date'],
-                          'currency': div['currency'],
-                          'div_amount_in_currency': float(div['div_amount']),
-                          'div_amount_in_pln': div_amount_pln,
-                          'ask': ask})
+            'date': div['date'],
+            'currency': div['currency'],
+            'div_amount_in_currency': float(div['div_amount']),
+            'div_amount_in_pln': div_amount_pln,
+            'ask': ask})
     return divs_list
 
 
@@ -140,11 +141,11 @@ def formation_div_tax_final_report(raw_dividend_list, currencies_bids, currency_
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_tax_amount']), 3)
         divs_list.append({'ticker': div['ticker'],
-                        'date': div['date'],
-                        'currency': div['currency'],
-                        'div_tax_amount_in_currency': float(div['div_tax_amount']),
-                        'div_tax_amount_in_pln': div_amount_pln,
-                        'ask': ask})
+            'date': div['date'],
+            'currency': div['currency'],
+            'div_tax_amount_in_currency': float(div['div_tax_amount']),
+            'div_tax_amount_in_pln': div_amount_pln,
+            'ask': ask})
     return divs_list
 
 

@@ -18,7 +18,7 @@ def writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dic
     worksheet = workbook.add_worksheet(worksheetname)
     bold = workbook.add_format({'bold': True})
     headerColumnLineNumber = 2
-    
+
     colNames = createTempAlphabet(len(headers))
     for idx, _ in enumerate(headers):
         worksheet.write('{}{}'.format(colNames[idx], headerColumnLineNumber), headers[idx], bold)
@@ -31,7 +31,7 @@ def writeWorkSheet(file_path: str, items: list, worksheetname: str, headers: dic
 
 
 def unionDivsStocksXls():
-    headers = [ 'Asset type', 'Amount in currency', 'Amount in pln' ]
+    headers = ['Asset type', 'Amount in currency', 'Amount in pln']
 
     mainPandas = pd.DataFrame(columns = headers)
     stocksPandas = pd.DataFrame()
@@ -49,7 +49,7 @@ def unionDivsStocksXls():
     mainPandas.at[1, 'Asset type'] = 'Stocks IB. Profit/Lose'
     mainPandas.at[1, 'Amount in currency'] = round(stocksPandas['ProfitInCurrency'].sum(), 3)
     mainPandas.at[1, 'Amount in pln'] = round(stocksPandas['ProfitInPln'].sum(), 3)
-    
+
     mainPandas.at[2, 'Asset type'] = 'Stocks IB. Fees'
     mainPandas.at[2, 'Amount in currency'] = round(stocksPandas['TaxInCurrency'].sum(), 3)
     mainPandas.at[2, 'Amount in pln'] = round(stocksPandas['TaxInPln'].sum(), 3)
@@ -57,7 +57,7 @@ def unionDivsStocksXls():
     mainPandas.at[3, 'Asset type'] = 'Dividends IB. Profit'
     mainPandas.at[3, 'Amount in currency'] = round(divsIncomePandas['DivInCurrency'].sum(), 3)
     mainPandas.at[3, 'Amount in pln'] = round(divsIncomePandas['DivInPln'].sum(), 3)
-    
+
     mainPandas.at[4, 'Asset type'] = 'Dividends IB. Tax'
     mainPandas.at[4, 'Amount in currency'] = round(divsTaxPandas['DivTaxInCurrency'].sum(), 3)
     mainPandas.at[4, 'Amount in pln'] = round(divsTaxPandas['DivTaxInPln'].sum(), 3)
