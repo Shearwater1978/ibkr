@@ -86,9 +86,6 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         if date == item_data['effectiveDate']:
             ask = find_key(tmp_currency_ask_list, date)
             return ask
-    '''
-        Detect and hadle situation when date for dividends paid is absent in bank response
-    '''
     yesterday_date = get_yesterday(date)
     ask = currency_convert_to_date(currency, yesterday_date, currencies_bids, currency_index)
     return ask

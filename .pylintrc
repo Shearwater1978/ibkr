@@ -6,3 +6,5 @@ disable=
   W0212, # (protected-access)
   C0209, # (consider-using-f-string)
   W1202, # (logging-format-interpolation)
+  W0718, # (broad-exception-caught)
+  W0621, # (redefined-outer-name)
