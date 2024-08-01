@@ -10,6 +10,9 @@ import sys
 import logging
 import os
 
+import logging
+import os
+
 import aux_scripts.writer_to_xls as writertoexcell
 import aux_scripts.collect_stock_info as stockcalculation
 import aux_scripts.collect_divs_income_info as divscalculation
@@ -62,10 +65,12 @@ def make_printable(s):
     # the translate method on str removes characters
     # that map to None from the string
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
+    logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     return s.translate(NOPRINT_TRANS_TABLE)
 
 
 def find_key(input_dict, value):
+    logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     result = None
     for values in input_dict.values():
