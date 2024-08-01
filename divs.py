@@ -77,7 +77,6 @@ def find_key(input_dict, value):
 
 
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
-    # print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
     for item in currency_index:
@@ -88,7 +87,7 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         # if make_printable(date) == make_printable(item_data['effectiveDate']):
         if date == item_data['effectiveDate']:
             ask = find_key(tmp_currency_ask_list, date)
-            return (ask)
+            return ask
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
@@ -221,7 +220,7 @@ if __name__ == '__main__':
         logger.info(msg_success)
     except Error as e:
         msg_error = f'File ibkr_report_div_income.xls was written with error {e}.'
-    
+
     # Work with div tax
     msg = 'Start calculate Div tax'
     logger.info(msg)
@@ -239,7 +238,7 @@ if __name__ == '__main__':
     except Error as e:
         msg_error = f'File ibkr_report_div_tax.xls was written with error {e}.'
         logger.error(msg_error)
-    
+
     # Agregate all xls files into one
     result = 'Start writting final report'
     logger.info(result)
