@@ -30,7 +30,7 @@ if os.environ['DIV_LOG_LVL']:
             logging.basicConfig(format=FORMAT_INFO, level=logging.INFO)
 
 
-def getCurrencyExchangeRate(from_date, to_date, currency):
+def get_currency_exchange_rate(from_date, to_date, currency):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
@@ -45,9 +45,8 @@ def getCurrencyExchangeRate(from_date, to_date, currency):
             currency_info[enum]['mid'] = item['mid']
     return currency_info
 
-
 # Move to one day in past, if rate absent to date
-def getYesterday(date):
+def get_yesterday(date):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
     return yesterday.strftime("%Y-%m-%d")
@@ -91,17 +90,17 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
-    yesterdayDate = getYesterday(date)
+    yesterdayDate = get_yesterday(date)
     ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
     return ask
 
 
-def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
+def formation_stock_final_report(rawStocks, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     stockList = []
     for rawStock in rawStocks:
         currency = rawStock['currency']
-        date = getYesterday(rawStock['date'])
+        date = get_yesterday(rawStock['date'])
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
         profit_pln = round(float(ask) * float(rawStock['profit']), 3)
@@ -163,7 +162,7 @@ def getCurrencieBids(currencies):
     to_date = date_new(previous_epoch_year, 12, 31)
     currencies_bids = []
     for currency in currencies:
-        currencies_bids.append({currency: getCurrencyExchangeRate(from_date, to_date, currency)})
+        currencies_bids.append({currency: get_currency_exchange_rate(from_date, to_date, currency)})
     return currencies_bids
 
 
@@ -193,7 +192,7 @@ if __name__ == '__main__':
     rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
-    stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
+    stockFinalReport = formation_stock_final_report(rawStocks, currencies_bids, currency_index)
     stockHeaders = [
         'Ticker',
         'Date',
