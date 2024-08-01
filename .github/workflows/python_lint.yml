@@ -11,8 +11,8 @@ on:
     branches:
       - main
   push:
-    paths:
-      - '.'
+    branches:
+      - '*'
 jobs:
   python-lint:
     runs-on: ubuntu-latest

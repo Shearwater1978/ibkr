@@ -2,12 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-import csv
-import re
 import urllib.request
 import json
 import datetime as dt
-from datetime import datetime
 from datetime import date as date_new
 import sys
 import logging
@@ -22,8 +19,8 @@ import aux_scripts.collect_divs_tax_info as divtaxcalculation
 logger = logging.getLogger(__name__)
 
 if os.environ['DIV_LOG_LVL']:
-    debug_lvl = str(os.environ['DIV_LOG_LVL']).lower()
-    match debug_lvl:
+    DEBUG_LVL = str(os.environ['DIV_LOG_LVL']).lower()
+    match DEBUG_LVL:
         case "debug":
             FORMAT_INFO = '%(asctime)s - %(message)s'
             logging.basicConfig(format=FORMAT_INFO, level=logging.DEBUG)
@@ -31,30 +28,28 @@ if os.environ['DIV_LOG_LVL']:
             FORMAT_INFO = '%(asctime)s - %(levelname)s - %(message)s'
             logging.basicConfig(format=FORMAT_INFO, level=logging.INFO)
 
-SystemExit
 
-
-def getCurrencyExchangeRate(from_date, to_date, currency):
+def get_currency_exchange_rate(from_date, to_date, currency):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
     currency_info = {}
-    URL = f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{from_date}/{to_date}'
-    with urllib.request.urlopen(URL) as url:
+    url = f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{from_date}/{to_date}'
+    with urllib.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
         for enum, item in enumerate(data['rates']):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
             currency_info[enum]['mid'] = item['mid']
-    return (currency_info)
+    return currency_info
 
 
 # Move to one day in past, if rate absent to date
-def getYesterday(date):
+def get_yesterday(date):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    return (yesterday.strftime("%Y-%m-%d"))
+    return yesterday.strftime("%Y-%m-%d")
 
 
 NOPRINT_TRANS_TABLE = {
@@ -67,10 +62,12 @@ def make_printable(s):
     # the translate method on str removes characters
     # that map to None from the string
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
+    logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     return s.translate(NOPRINT_TRANS_TABLE)
 
 
 def find_key(input_dict, value):
+    logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     result = None
     for values in input_dict.values():
@@ -81,7 +78,6 @@ def find_key(input_dict, value):
 
 
 def currency_convert_to_date(currency, date, currencies_bids, currency_index):
-    # print('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     tmp_index = 0
     for item in currency_index:
@@ -92,41 +88,36 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
         # if make_printable(date) == make_printable(item_data['effectiveDate']):
         if date == item_data['effectiveDate']:
             ask = find_key(tmp_currency_ask_list, date)
-            return (ask)
-    '''
-        Detect and hadle situation when date for dividends paid is absent in bank response
-    '''
-    
-    yesterdayDate = getYesterday(date)
-    ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
-    return (ask)
+            return ask
+    yesterday_date = get_yesterday(date)
+    ask = currency_convert_to_date(currency, yesterday_date, currencies_bids, currency_index)
+    return ask
 
 
-def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
+def formation_stock_final_report(raw_stocks, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
-    stockList = []
-    for rawStock in rawStocks:
-        currency = rawStock['currency']
-        date = getYesterday(rawStock['date'])
+    stock_list = []
+    for raw_stock in raw_stocks:
+        currency = raw_stock['currency']
+        date = get_yesterday(raw_stock['date'])
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
-        withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
-        profit_pln = round(float(ask) * float(rawStock['profit']), 3)
-        stockList.append({
-            'ticker': rawStock['ticker'], 
-            'date': rawStock['date'], 
-            'currency': rawStock['currency'],
-            'quantity': rawStock['quantity'],
-            'withholdingtax': rawStock['withholdingtax'], 
-            'withholdingtax_pln': withholdingtax_pln, 
-            'profit': rawStock['profit'],
+        withholdingtax_pln = round(float(ask) * float(raw_stock['withholdingtax']), 3)
+        profit_pln = round(float(ask) * float(raw_stock['profit']), 3)
+        stock_list.append({
+            'ticker': raw_stock['ticker'],
+            'date': raw_stock['date'],
+            'currency': raw_stock['currency'],
+            'quantity': raw_stock['quantity'],
+            'withholdingtax': raw_stock['withholdingtax'],
+            'withholdingtax_pln': withholdingtax_pln,
+            'profit': raw_stock['profit'],
             'profit_pln': profit_pln,
-            'order_type': rawStock['order_type'],
-            'ask': ask
-        })
-    return stockList
+            'order_type': raw_stock['order_type'],
+            'ask': ask})
+    return stock_list
 
 
-def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_index):
+def formation_div_income_final_report(raw_dividend_list, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     divs_list = []
     for div in raw_dividend_list:
@@ -134,17 +125,17 @@ def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_i
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
-        divs_list.append({'ticker': div['ticker'], 
-                          'date': div['date'], 
-                          'currency': div['currency'], 
-                          'div_amount_in_currency': float(div['div_amount']), 
-                          'div_amount_in_pln': div_amount_pln,
-                          'ask': ask
-                        })
-    return (divs_list)
+        divs_list.append({
+            'ticker': div['ticker'],
+            'date': div['date'],
+            'currency': div['currency'],
+            'div_amount_in_currency': float(div['div_amount']),
+            'div_amount_in_pln': div_amount_pln,
+            'ask': ask})
+    return divs_list
 
 
-def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_index):
+def formation_div_tax_final_report(raw_dividend_list, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     divs_list = []
     for div in raw_dividend_list:
@@ -152,28 +143,28 @@ def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_inde
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_tax_amount']), 3)
-        divs_list.append({'ticker': div['ticker'], 
-                        'date': div['date'], 
-                        'currency': div['currency'], 
-                        'div_tax_amount_in_currency': float(div['div_tax_amount']), 
-                        'div_tax_amount_in_pln': div_amount_pln,
-                        'ask': ask
-                        })
-    return (divs_list)
+        divs_list.append({
+            'ticker': div['ticker'],
+            'date': div['date'],
+            'currency': div['currency'],
+            'div_tax_amount_in_currency': float(div['div_tax_amount']),
+            'div_tax_amount_in_pln': div_amount_pln,
+            'ask': ask})
+    return divs_list
 
 
-def getCurrencieBids(currencies):
+def get_currencie_bids(currencies):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
     to_date = date_new(previous_epoch_year, 12, 31)
     currencies_bids = []
     for currency in currencies:
-        currencies_bids.append({currency: getCurrencyExchangeRate(from_date, to_date, currency)})
+        currencies_bids.append({currency: get_currency_exchange_rate(from_date, to_date, currency)})
     return currencies_bids
 
 
-def getCurrencyIndex(currencies_bids):
+def get_currency_index(currencies_bids):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     currency_index = []
     for enum, item in enumerate(currencies_bids):
@@ -194,58 +185,108 @@ if __name__ == '__main__':
         in_file = sys.argv[1]
 
     # Work with stock
-    msg = 'Start calculate Stocks'
-    logger.info(msg)
-    rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
-    stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
-    stockHeaders = ['Ticker', 'Date', 'Currency', 'Quantity', 'TaxInCurrency', 'TaxInPln', 'ProfitInCurrency', 'ProfitInPln', 'OrderType', 'ExchangeRateToDate']
-    result = 'Start writting to ibkr_report_stocks.xls'
-    logger.info(result)
+    MSG_START = 'Start calculate Stocks'
+    logger.info(MSG_START)
+    raw_stocks, currencies = stockcalculation.read_input_csv_file(in_file)
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
+    stockFinalReport = formation_stock_final_report(raw_stocks, currencies_bids, currency_index)
+    stockHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'Quantity',
+        'TaxInCurrency',
+        'TaxInPln',
+        'ProfitInCurrency',
+        'ProfitInPln',
+        'OrderType',
+        'ExchangeRateToDate'
+    ]
+    MSG_RESULT = 'Start writting to ibkr_report_stocks.xls'
+    logger.info(MSG_RESULT)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_stocks.xls', stockFinalReport, 'stocks', stockHeaders)
-        msg_success = 'File ibkr_report_stocks.xls was written successfully.'
-        logger.info(msg_success)
-    except Error as e:
-        msg_error = f'File ibkr_report_stocks.xls was written with error {e}.'
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_stocks.xls',
+            stockFinalReport,
+            'stocks',
+            stockHeaders
+        )
+        MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
+    except Exception as e:
+        MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
 
     # Work with div income
-    msg = 'Start calculate Div income'
-    logger.info(msg)
+    MSG_START = 'Start calculate Div income'
+    logger.info(MSG_START)
     rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
-    divIncomeFinalReport = formationDivIncomeFinalReport(rawDivs, currencies_bids, currency_index)
-    divIncomeHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'ExchangeRateToDate']
-    result = 'Start writting to ibkr_report_div_income.xls'
-    logger.info(result)
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
+    divIncomeFinalReport = formation_div_income_final_report(
+        rawDivs,
+        currencies_bids,
+        currency_index
+    )
+    divIncomeHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'DivInCurrency',
+        'DivInPln',
+        'ExchangeRateToDate'
+    ]
+    MSG_RESULT = 'Start writting to ibkr_report_div_income.xls'
+    logger.info(MSG_RESULT)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_div_income.xls', divIncomeFinalReport, 'divincome', divIncomeHeaders)
-        msg_success = 'File ibkr_report_div_income.xls was written successfully.'
-        logger.info(msg_success)
-    except Error as e:
-        msg_error = f'File ibkr_report_div_income.xls was written with error {e}.'
-    
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_div_income.xls',
+            divIncomeFinalReport,
+            'divincome',
+            divIncomeHeaders
+        )
+        MSG_SUCCESS = 'File ibkr_report_div_income.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
+    except Exception as e:
+        MSG_ERROR = f'File ibkr_report_div_income.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
+
     # Work with div tax
-    msg = 'Start calculate Div tax'
-    logger.info(msg)
+    MSG_START = 'Start calculate Div tax'
+    logger.info(MSG_START)
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)    
-    currency_index = getCurrencyIndex(currencies_bids)
-    divTaxFinalReport = formationDivTaxFinalReport(rawDivsTax, currencies_bids, currency_index)
-    divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivTaxInCurrency', 'DivTaxInPln', 'ExchangeRateToDate']
-    result = 'Start writting to ibkr_report_div_tax.xls'
-    logger.info(result)
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
+    divTaxFinalReport = formation_div_tax_final_report(
+        rawDivsTax,
+        currencies_bids,
+        currency_index
+    )
+    divTaxHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'DivTaxInCurrency',
+        'DivTaxInPln',
+        'ExchangeRateToDate'
+    ]
+    MSG_START = 'Start writting to ibkr_report_div_tax.xls'
+    logger.info(MSG_START)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divTaxHeaders)
-        msg_success = 'File ibkr_report_div_tax.xls was written successfully.'
-        logger.info(msg_success)
-    except Error as e:
-        msg_error = f'File ibkr_report_div_tax.xls was written with error {e}.'
-        logger.error(msg_error)
-    
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_div_tax.xls',
+            divTaxFinalReport,
+            'divincome',
+            divTaxHeaders
+        )
+        MSG_SUCCESS = 'File ibkr_report_div_tax.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
+    except Exception as e:
+        MSG_ERROR = f'File ibkr_report_div_tax.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
+
     # Agregate all xls files into one
-    result = 'Start writting final report'
-    logger.info(result)
+    MSG_START = 'Start writting final report'
+    logger.info(MSG_START)
     writertoexcell.unionDivsStocksXls()
