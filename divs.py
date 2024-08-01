@@ -10,9 +10,6 @@ import sys
 import logging
 import os
 
-import logging
-import os
-
 import aux_scripts.writer_to_xls as writertoexcell
 import aux_scripts.collect_stock_info as stockcalculation
 import aux_scripts.collect_divs_income_info as divscalculation
