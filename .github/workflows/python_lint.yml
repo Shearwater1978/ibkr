@@ -1,0 +1,30 @@
+name: Python code linting
+run-name: Python linting 🚀
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - edited
+      - ready_for_review
+    branches:
+      - main
+  push:
+    paths:
+      - '.'
+jobs:
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Install tools
+          run: pip install flake8 pylint
+          
+        - name: pylint
+          run: pylint .
+
+        - name: flake8
+          run: flake8 .
