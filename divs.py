@@ -216,7 +216,7 @@ if __name__ == '__main__':
             )
             MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
             logger.info(MSG_SUCCESS)
-            ibkr_report_stocks_is_exist = True
+            STOCKS_IS_EXIST = True
         except Exception as e:
             MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
             logger.error(MSG_ERROR)
@@ -292,4 +292,4 @@ if __name__ == '__main__':
     # Agregate all xls files into one
     MSG_START = 'Start writting final report'
     logger.info(MSG_START)
-    writertoexcell.unionDivsStocksXls(ibkr_report_stocks_is_exist=False)
+    writertoexcell.unionDivsStocksXls(STOCKS_IS_EXIST=False)
