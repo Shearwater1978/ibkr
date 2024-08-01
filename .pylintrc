@@ -4,3 +4,5 @@ disable=
   E0401, # (import-error)
   C0116, # (missing-function-docstring)
   W0212, # (protected-access)
+  C0209, # (consider-using-f-string)
+  W1202, # (logging-format-interpolation)

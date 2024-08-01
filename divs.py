@@ -90,8 +90,8 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     '''
         Detect and hadle situation when date for dividends paid is absent in bank response
     '''
-    yesterdayDate = get_yesterday(date)
-    ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
+    yesterday_date = get_yesterday(date)
+    ask = currency_convert_to_date(currency, yesterday_date, currencies_bids, currency_index)
     return ask
 
 
@@ -119,7 +119,7 @@ def formation_stock_final_report(rawStocks, currencies_bids, currency_index):
     return stockList
 
 
-def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_index):
+def formation_div_income_final_report(raw_dividend_list, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     divs_list = []
     for div in raw_dividend_list:
@@ -137,7 +137,7 @@ def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_i
     return divs_list
 
 
-def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_index):
+def formation_div_tax_final_report(raw_dividend_list, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     divs_list = []
     for div in raw_dividend_list:
@@ -155,7 +155,7 @@ def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_inde
     return divs_list
 
 
-def getCurrencieBids(currencies):
+def get_currencie_bids(currencies):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     previous_epoch_year = date_new.today().year - 1
     from_date = date_new(previous_epoch_year, 1, 1)
@@ -166,7 +166,7 @@ def getCurrencieBids(currencies):
     return currencies_bids
 
 
-def getCurrencyIndex(currencies_bids):
+def get_currency_index(currencies_bids):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     currency_index = []
     for enum, item in enumerate(currencies_bids):
@@ -190,8 +190,8 @@ if __name__ == '__main__':
     MSG_START = 'Start calculate Stocks'
     logger.info(MSG_START)
     rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
     stockFinalReport = formation_stock_final_report(rawStocks, currencies_bids, currency_index)
     stockHeaders = [
         'Ticker',
@@ -224,9 +224,9 @@ if __name__ == '__main__':
     MSG_START = 'Start calculate Div income'
     logger.info(MSG_START)
     rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
-    divIncomeFinalReport = formationDivIncomeFinalReport(rawDivs, currencies_bids, currency_index)
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
+    divIncomeFinalReport = formation_div_income_final_report(rawDivs, currencies_bids, currency_index)
     divIncomeHeaders = [
         'Ticker',
         'Date',
@@ -254,9 +254,9 @@ if __name__ == '__main__':
     MSG_START = 'Start calculate Div tax'
     logger.info(MSG_START)
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)
-    currency_index = getCurrencyIndex(currencies_bids)
-    divTaxFinalReport = formationDivTaxFinalReport(
+    currencies_bids = get_currencie_bids(currencies)
+    currency_index = get_currency_index(currencies_bids)
+    divTaxFinalReport = formation_div_tax_final_report(
         rawDivsTax,
         currencies_bids,
         currency_index
