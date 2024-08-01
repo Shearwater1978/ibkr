@@ -1,0 +1,6 @@
+[MASTER]
+disable=
+  C0114, # (missing-module-docstring)
+  E0401, # (import-error)
+  C0116, # (missing-function-docstring)
+  W0212, # (protected-access)

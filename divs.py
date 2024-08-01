@@ -20,8 +20,8 @@ import aux_scripts.collect_divs_tax_info as divtaxcalculation
 logger = logging.getLogger(__name__)
 
 if os.environ['DIV_LOG_LVL']:
-    debug_lvl = str(os.environ['DIV_LOG_LVL']).lower()
-    match debug_lvl:
+    DEBUG_LVL = str(os.environ['DIV_LOG_LVL']).lower()
+    match DEBUG_LVL:
         case "debug":
             FORMAT_INFO = '%(asctime)s - %(message)s'
             logging.basicConfig(format=FORMAT_INFO, level=logging.DEBUG)
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     msg = 'Start calculate Div tax'
     logger.info(msg)
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
-    currencies_bids = getCurrencieBids(currencies)    
+    currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divTaxFinalReport = formationDivTaxFinalReport(
         rawDivsTax,
