@@ -106,12 +106,12 @@ def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
         withholdingtax_pln = round(float(ask) * float(rawStock['withholdingtax']), 3)
         profit_pln = round(float(ask) * float(rawStock['profit']), 3)
         stockList.append({
-            'ticker': rawStock['ticker'], 
-            'date': rawStock['date'], 
+            'ticker': rawStock['ticker'],
+            'date': rawStock['date'],
             'currency': rawStock['currency'],
             'quantity': rawStock['quantity'],
-            'withholdingtax': rawStock['withholdingtax'], 
-            'withholdingtax_pln': withholdingtax_pln, 
+            'withholdingtax': rawStock['withholdingtax'],
+            'withholdingtax_pln': withholdingtax_pln,
             'profit': rawStock['profit'],
             'profit_pln': profit_pln,
             'order_type': rawStock['order_type'],
@@ -128,10 +128,10 @@ def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_i
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_amount']), 3)
-        divs_list.append({'ticker': div['ticker'], 
+        divs_list.append({'ticker': div['ticker'],
                           'date': div['date'],
                           'currency': div['currency'],
-                          'div_amount_in_currency': float(div['div_amount']), 
+                          'div_amount_in_currency': float(div['div_amount']),
                           'div_amount_in_pln': div_amount_pln,
                           'ask': ask
                         })
@@ -146,10 +146,10 @@ def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_inde
         date = div['date']
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         div_amount_pln = round(float(ask) * float(div['div_tax_amount']), 3)
-        divs_list.append({'ticker': div['ticker'], 
-                        'date': div['date'], 
-                        'currency': div['currency'], 
-                        'div_tax_amount_in_currency': float(div['div_tax_amount']), 
+        divs_list.append({'ticker': div['ticker'],
+                        'date': div['date'],
+                        'currency': div['currency'],
+                        'div_tax_amount_in_currency': float(div['div_tax_amount']),
                         'div_tax_amount_in_pln': div_amount_pln,
                         'ask': ask
                         })
@@ -194,11 +194,27 @@ if __name__ == '__main__':
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     stockFinalReport = formationStockFinalReport(rawStocks, currencies_bids, currency_index)
-    stockHeaders = ['Ticker', 'Date', 'Currency', 'Quantity', 'TaxInCurrency', 'TaxInPln', 'ProfitInCurrency', 'ProfitInPln', 'OrderType', 'ExchangeRateToDate']
+    stockHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'Quantity',
+        'TaxInCurrency',
+        'TaxInPln',
+        'ProfitInCurrency',
+        'ProfitInPln',
+        'OrderType',
+        'ExchangeRateToDate'
+    ]
     result = 'Start writting to ibkr_report_stocks.xls'
     logger.info(result)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_stocks.xls', stockFinalReport, 'stocks', stockHeaders)
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_stocks.xls',
+            stockFinalReport,
+            'stocks',
+            stockHeaders
+        )
         msg_success = 'File ibkr_report_stocks.xls was written successfully.'
         logger.info(msg_success)
     except Error as e:
@@ -211,11 +227,23 @@ if __name__ == '__main__':
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
     divIncomeFinalReport = formationDivIncomeFinalReport(rawDivs, currencies_bids, currency_index)
-    divIncomeHeaders = ['Ticker', 'Date', 'Currency', 'DivInCurrency', 'DivInPln', 'ExchangeRateToDate']
+    divIncomeHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'DivInCurrency',
+        'DivInPln',
+        'ExchangeRateToDate'
+    ]
     result = 'Start writting to ibkr_report_div_income.xls'
     logger.info(result)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_div_income.xls', divIncomeFinalReport, 'divincome', divIncomeHeaders)
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_div_income.xls',
+            divIncomeFinalReport,
+            'divincome',
+            divIncomeHeaders
+        )
         msg_success = 'File ibkr_report_div_income.xls was written successfully.'
         logger.info(msg_success)
     except Error as e:
@@ -227,12 +255,28 @@ if __name__ == '__main__':
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)    
     currency_index = getCurrencyIndex(currencies_bids)
-    divTaxFinalReport = formationDivTaxFinalReport(rawDivsTax, currencies_bids, currency_index)
-    divTaxHeaders = ['Ticker', 'Date', 'Currency', 'DivTaxInCurrency', 'DivTaxInPln', 'ExchangeRateToDate']
+    divTaxFinalReport = formationDivTaxFinalReport(
+        rawDivsTax,
+        currencies_bids,
+        currency_index
+    )
+    divTaxHeaders = [
+        'Ticker',
+        'Date',
+        'Currency',
+        'DivTaxInCurrency',
+        'DivTaxInPln',
+        'ExchangeRateToDate'
+    ]
     result = 'Start writting to ibkr_report_div_tax.xls'
     logger.info(result)
     try:
-        writertoexcell.writeWorkSheet('ibkr_report_div_tax.xls', divTaxFinalReport, 'divincome', divTaxHeaders)
+        writertoexcell.writeWorkSheet(
+            'ibkr_report_div_tax.xls',
+            divTaxFinalReport,
+            'divincome',
+            divTaxHeaders
+        )
         msg_success = 'File ibkr_report_div_tax.xls was written successfully.'
         logger.info(msg_success)
     except Error as e:
