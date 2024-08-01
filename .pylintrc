@@ -5,7 +5,6 @@ disable=
   C0209, # (consider-using-f-string)
   C0413, # (wrong-import-position)
   E0401, # (import-error)
-  E0402, # (module-level-import-not-at-top-of-file)
   W0212, # (protected-access)
   W0621, # (redefined-outer-name)
   W0718, # (broad-exception-caught)
