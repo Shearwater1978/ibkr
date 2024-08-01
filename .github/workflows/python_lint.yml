@@ -11,8 +11,8 @@ on:
     branches:
       - main
   push:
-    branches:
-      - '*'
+    branches-ignore:
+      - main
 jobs:
   python-lint:
     runs-on: ubuntu-latest
