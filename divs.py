@@ -188,8 +188,8 @@ if __name__ == '__main__':
         in_file = sys.argv[1]
 
     # Work with stock
-    msg = 'Start calculate Stocks'
-    logger.info(msg)
+    MSG_START = 'Start calculate Stocks'
+    logger.info(MSG_START)
     rawStocks, currencies = stockcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
@@ -206,8 +206,8 @@ if __name__ == '__main__':
         'OrderType',
         'ExchangeRateToDate'
     ]
-    result = 'Start writting to ibkr_report_stocks.xls'
-    logger.info(result)
+    MSG_RESULT = 'Start writting to ibkr_report_stocks.xls'
+    logger.info(MSG_RESULT)
     try:
         writertoexcell.writeWorkSheet(
             'ibkr_report_stocks.xls',
@@ -215,14 +215,15 @@ if __name__ == '__main__':
             'stocks',
             stockHeaders
         )
-        msg_success = 'File ibkr_report_stocks.xls was written successfully.'
-        logger.info(msg_success)
+        MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
     except Error as e:
-        msg_error = f'File ibkr_report_stocks.xls was written with error {e}.'
+        MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
 
     # Work with div income
-    msg = 'Start calculate Div income'
-    logger.info(msg)
+    MSG_START = 'Start calculate Div income'
+    logger.info(MSG_START)
     rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
@@ -235,8 +236,8 @@ if __name__ == '__main__':
         'DivInPln',
         'ExchangeRateToDate'
     ]
-    result = 'Start writting to ibkr_report_div_income.xls'
-    logger.info(result)
+    MSG_RESULT = 'Start writting to ibkr_report_div_income.xls'
+    logger.info(MSG_RESULT)
     try:
         writertoexcell.writeWorkSheet(
             'ibkr_report_div_income.xls',
@@ -244,14 +245,15 @@ if __name__ == '__main__':
             'divincome',
             divIncomeHeaders
         )
-        msg_success = 'File ibkr_report_div_income.xls was written successfully.'
-        logger.info(msg_success)
+        MSG_SUCCESS = 'File ibkr_report_div_income.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
     except Error as e:
-        msg_error = f'File ibkr_report_div_income.xls was written with error {e}.'
+        MSG_ERROR = f'File ibkr_report_div_income.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
 
     # Work with div tax
-    msg = 'Start calculate Div tax'
-    logger.info(msg)
+    MSG_START = 'Start calculate Div tax'
+    logger.info(MSG_START)
     rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
     currencies_bids = getCurrencieBids(currencies)
     currency_index = getCurrencyIndex(currencies_bids)
@@ -268,8 +270,8 @@ if __name__ == '__main__':
         'DivTaxInPln',
         'ExchangeRateToDate'
     ]
-    result = 'Start writting to ibkr_report_div_tax.xls'
-    logger.info(result)
+    MSG_START = 'Start writting to ibkr_report_div_tax.xls'
+    logger.info(MSG_START)
     try:
         writertoexcell.writeWorkSheet(
             'ibkr_report_div_tax.xls',
@@ -277,13 +279,13 @@ if __name__ == '__main__':
             'divincome',
             divTaxHeaders
         )
-        msg_success = 'File ibkr_report_div_tax.xls was written successfully.'
-        logger.info(msg_success)
+        MSG_SUCCESS = 'File ibkr_report_div_tax.xls was written successfully.'
+        logger.info(MSG_SUCCESS)
     except Error as e:
-        msg_error = f'File ibkr_report_div_tax.xls was written with error {e}.'
-        logger.error(msg_error)
+        MSG_ERROR = f'File ibkr_report_div_tax.xls was written with error {e}.'
+        logger.error(MSG_ERROR)
 
     # Agregate all xls files into one
-    result = 'Start writting final report'
-    logger.info(result)
+    MSG_START = 'Start writting final report'
+    logger.info(MSG_START)
     writertoexcell.unionDivsStocksXls()
