@@ -226,7 +226,11 @@ if __name__ == '__main__':
     rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
     currencies_bids = get_currencie_bids(currencies)
     currency_index = get_currency_index(currencies_bids)
-    divIncomeFinalReport = formation_div_income_final_report(rawDivs, currencies_bids, currency_index)
+    divIncomeFinalReport = formation_div_income_final_report(
+        rawDivs,
+        currencies_bids,
+        currency_index
+    )
     divIncomeHeaders = [
         'Ticker',
         'Date',
