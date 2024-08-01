@@ -12,7 +12,7 @@ on:
       - main
   push:
     branches:
-      - '*'
+      - '!master'
 jobs:
   python-lint:
     runs-on: ubuntu-latest
