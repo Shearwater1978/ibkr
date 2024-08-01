@@ -10,10 +10,11 @@ import sys
 import logging
 import os
 
-import aux_scripts.writer_to_xls as writertoexcell
-import aux_scripts.collect_stock_info as stockcalculation
-import aux_scripts.collect_divs_income_info as divscalculation
-import aux_scripts.collect_divs_tax_info as divtaxcalculation
+sys.path.insert(1, './aux_scripts/')
+import writer_to_xls as writertoexcell
+import collect_stock_info as stockcalculation
+import collect_divs_income_info as divscalculation
+import collect_divs_tax_info as divtaxcalculation
 
 
 logger = logging.getLogger(__name__)

@@ -15,6 +15,6 @@ How to set-up dividends report:
 
 How to run process of calculating dividends in PLN:
 1. Download created report into directory with Python script
-2. Execute script with command: python3 ./divs.py Uxxxxx.2022.dividends.csv
+2. Execute script with command: python3 ./app/divs.py Uxxxxx.YYYY.dividends.csv
 
 Enjoy
