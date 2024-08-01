@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-import csv
-import re
 import urllib.request
 import json
 import datetime as dt
@@ -31,8 +29,6 @@ if os.environ['DIV_LOG_LVL']:
             FORMAT_INFO = '%(asctime)s - %(levelname)s - %(message)s'
             logging.basicConfig(format=FORMAT_INFO, level=logging.INFO)
 
-SystemExit
-
 
 def getCurrencyExchangeRate(from_date, to_date, currency):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
@@ -47,14 +43,14 @@ def getCurrencyExchangeRate(from_date, to_date, currency):
             currency_info[enum] = {}
             currency_info[enum]['effectiveDate'] = item['effectiveDate']
             currency_info[enum]['mid'] = item['mid']
-    return (currency_info)
+    return currency_info
 
 
 # Move to one day in past, if rate absent to date
 def getYesterday(date):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
     yesterday = dt.datetime.strptime(date, "%Y-%m-%d").date() - dt.timedelta(days=1)
-    return (yesterday.strftime("%Y-%m-%d"))
+    return yesterday.strftime("%Y-%m-%d")
 
 
 NOPRINT_TRANS_TABLE = {
@@ -99,7 +95,7 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
     
     yesterdayDate = getYesterday(date)
     ask = currency_convert_to_date(currency, yesterdayDate, currencies_bids, currency_index)
-    return (ask)
+    return ask
 
 
 def formationStockFinalReport(rawStocks, currencies_bids, currency_index):
@@ -141,7 +137,7 @@ def formationDivIncomeFinalReport(raw_dividend_list, currencies_bids, currency_i
                           'div_amount_in_pln': div_amount_pln,
                           'ask': ask
                         })
-    return (divs_list)
+    return divs_list
 
 
 def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_index):
@@ -159,7 +155,7 @@ def formationDivTaxFinalReport(raw_dividend_list, currencies_bids, currency_inde
                         'div_tax_amount_in_pln': div_amount_pln,
                         'ask': ask
                         })
-    return (divs_list)
+    return divs_list
 
 
 def getCurrencieBids(currencies):
