@@ -1,10 +1,11 @@
 [MASTER]
 disable=
   C0114, # (missing-module-docstring)
-  E0401, # (import-error)
   C0116, # (missing-function-docstring)
-  W0212, # (protected-access)
   C0209, # (consider-using-f-string)
-  W1202, # (logging-format-interpolation)
-  W0718, # (broad-exception-caught)
+  C0413, # (wrong-import-position)
+  E0401, # (import-error)
+  W0212, # (protected-access)
   W0621, # (redefined-outer-name)
+  W0718, # (broad-exception-caught)
+  W1202, # (logging-format-interpolation)

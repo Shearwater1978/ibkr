@@ -6,11 +6,12 @@ import urllib.request
 import json
 import datetime as dt
 from datetime import date as date_new
-import sys
 import logging
 import os
-
+import sys
 sys.path.insert(1, './aux_scripts/')
+
+
 import writer_to_xls as writertoexcell
 import collect_stock_info as stockcalculation
 import collect_divs_income_info as divscalculation
@@ -58,12 +59,12 @@ NOPRINT_TRANS_TABLE = {
 }
 
 
-def make_printable(s):
+def make_printable(raw_line):
     """Replace non-printable characters in a string."""
     # the translate method on str removes characters
     # that map to None from the string
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
-    return s.translate(NOPRINT_TRANS_TABLE)
+    return raw_line.translate(NOPRINT_TRANS_TABLE)
 
 
 def find_key(input_dict, value):
@@ -177,16 +178,17 @@ def main():
 
 
 if __name__ == '__main__':
+    INPUT_FILE = ''
     if len(sys.argv) <= 1:
         print("Input file missed. Abort")
         sys.exit(0)
     else:
-        in_file = sys.argv[1]
+        INPUT_FILE = sys.argv[1]
 
     # Work with stock
     MSG_START = 'Start calculate Stocks'
     logger.info(MSG_START)
-    raw_stocks, currencies = stockcalculation.read_input_csv_file(in_file)
+    raw_stocks, currencies = stockcalculation.read_input_csv_file(INPUT_FILE)
     if raw_stocks:
         currencies_bids = get_currencie_bids(currencies)
         currency_index = get_currency_index(currencies_bids)
@@ -221,7 +223,7 @@ if __name__ == '__main__':
     # Work with div income
     MSG_START = 'Start calculate Div income'
     logger.info(MSG_START)
-    rawDivs, currencies = divscalculation.read_input_csv_file(in_file)
+    rawDivs, currencies = divscalculation.read_input_csv_file(INPUT_FILE)
     currencies_bids = get_currencie_bids(currencies)
     currency_index = get_currency_index(currencies_bids)
     divIncomeFinalReport = formation_div_income_final_report(
@@ -255,7 +257,7 @@ if __name__ == '__main__':
     # Work with div tax
     MSG_START = 'Start calculate Div tax'
     logger.info(MSG_START)
-    rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(in_file)
+    rawDivsTax, currencies = divtaxcalculation.read_input_csv_file(INPUT_FILE)
     currencies_bids = get_currencie_bids(currencies)
     currency_index = get_currency_index(currencies_bids)
     divTaxFinalReport = formation_div_tax_final_report(
