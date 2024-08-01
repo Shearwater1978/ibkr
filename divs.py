@@ -186,35 +186,36 @@ if __name__ == '__main__':
     MSG_START = 'Start calculate Stocks'
     logger.info(MSG_START)
     raw_stocks, currencies = stockcalculation.read_input_csv_file(in_file)
-    currencies_bids = get_currencie_bids(currencies)
-    currency_index = get_currency_index(currencies_bids)
-    stockFinalReport = formation_stock_final_report(raw_stocks, currencies_bids, currency_index)
-    stockHeaders = [
-        'Ticker',
-        'Date',
-        'Currency',
-        'Quantity',
-        'TaxInCurrency',
-        'TaxInPln',
-        'ProfitInCurrency',
-        'ProfitInPln',
-        'OrderType',
-        'ExchangeRateToDate'
-    ]
-    MSG_RESULT = 'Start writting to ibkr_report_stocks.xls'
-    logger.info(MSG_RESULT)
-    try:
-        writertoexcell.writeWorkSheet(
-            'ibkr_report_stocks.xls',
-            stockFinalReport,
-            'stocks',
-            stockHeaders
-        )
-        MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
-        logger.info(MSG_SUCCESS)
-    except Exception as e:
-        MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
-        logger.error(MSG_ERROR)
+    if raw_stocks:
+        currencies_bids = get_currencie_bids(currencies)
+        currency_index = get_currency_index(currencies_bids)
+        stockFinalReport = formation_stock_final_report(raw_stocks, currencies_bids, currency_index)
+        stockHeaders = [
+            'Ticker',
+            'Date',
+            'Currency',
+            'Quantity',
+            'TaxInCurrency',
+            'TaxInPln',
+            'ProfitInCurrency',
+            'ProfitInPln',
+            'OrderType',
+            'ExchangeRateToDate'
+        ]
+        MSG_RESULT = 'Start writting to ibkr_report_stocks.xls'
+        logger.info(MSG_RESULT)
+        try:
+            writertoexcell.writeWorkSheet(
+                'ibkr_report_stocks.xls',
+                stockFinalReport,
+                'stocks',
+                stockHeaders
+            )
+            MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
+            logger.info(MSG_SUCCESS)
+        except Exception as e:
+            MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
+            logger.error(MSG_ERROR)
 
     # Work with div income
     MSG_START = 'Start calculate Div income'
