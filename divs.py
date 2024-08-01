@@ -5,7 +5,6 @@
 import urllib.request
 import json
 import datetime as dt
-from datetime import datetime
 from datetime import date as date_new
 import sys
 import logging
@@ -97,14 +96,14 @@ def currency_convert_to_date(currency, date, currencies_bids, currency_index):
 
 def formation_stock_final_report(raw_stocks, currencies_bids, currency_index):
     logger.debug('Called function {message}'.format(message=sys._getframe(0).f_code.co_name))
-    stockList = []
+    stock_list = []
     for raw_stock in raw_stocks:
         currency = raw_stock['currency']
         date = get_yesterday(raw_stock['date'])
         ask = currency_convert_to_date(currency, date, currencies_bids, currency_index)
         withholdingtax_pln = round(float(ask) * float(raw_stock['withholdingtax']), 3)
         profit_pln = round(float(ask) * float(raw_stock['profit']), 3)
-        stockList.append({
+        stock_list.append({
             'ticker': raw_stock['ticker'],
             'date': raw_stock['date'],
             'currency': raw_stock['currency'],
@@ -116,7 +115,7 @@ def formation_stock_final_report(raw_stocks, currencies_bids, currency_index):
             'order_type': raw_stock['order_type'],
             'ask': ask
         })
-    return stockList
+    return stock_list
 
 
 def formation_div_income_final_report(raw_dividend_list, currencies_bids, currency_index):
@@ -216,7 +215,7 @@ if __name__ == '__main__':
         )
         MSG_SUCCESS = 'File ibkr_report_stocks.xls was written successfully.'
         logger.info(MSG_SUCCESS)
-    except Error as e:
+    except Exception as e:
         MSG_ERROR = f'File ibkr_report_stocks.xls was written with error {e}.'
         logger.error(MSG_ERROR)
 
@@ -250,7 +249,7 @@ if __name__ == '__main__':
         )
         MSG_SUCCESS = 'File ibkr_report_div_income.xls was written successfully.'
         logger.info(MSG_SUCCESS)
-    except Error as e:
+    except Exception as e:
         MSG_ERROR = f'File ibkr_report_div_income.xls was written with error {e}.'
         logger.error(MSG_ERROR)
 
@@ -284,7 +283,7 @@ if __name__ == '__main__':
         )
         MSG_SUCCESS = 'File ibkr_report_div_tax.xls was written successfully.'
         logger.info(MSG_SUCCESS)
-    except Error as e:
+    except Exception as e:
         MSG_ERROR = f'File ibkr_report_div_tax.xls was written with error {e}.'
         logger.error(MSG_ERROR)
 
