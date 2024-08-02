@@ -1,8 +1,11 @@
 import unittest
 
+
+from unittest.mock import patch
 from divs import get_currency_index
 
 
+@patch.dict('os.environ', {'DIV_LOG_LVL': 'debug'})
 def test__get_yesterday():
     test_data_1 = [{'cad': {0: {'effectiveDate': '2023-01-02', 'mid': 3.2306}, 1: {'effectiveDate': '2023-01-03', 'mid': 3.2593}}}]
     test_data_2 = [{'cad': {0: {'effectiveDate': '2023-01-02', 'mid': 3.2306}}}, {'usd': {0: {'effectiveDate': '2023-01-02', 'mid': 4.3811}}}]
