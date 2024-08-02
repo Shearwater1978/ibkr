@@ -22,15 +22,15 @@ def configure_logging():
     logger = logging.getLogger(__name__)
 
     if os.environ['DIV_LOG_LVL']:
-        DEBUG_LVL = str(os.environ['DIV_LOG_LVL']).lower()
-        match DEBUG_LVL:
+        debug_lvl = str(os.environ['DIV_LOG_LVL']).lower()
+        match debug_lvl:
             case "debug":
-                FORMAT_INFO = '%(asctime)s - %(message)s'
-                logging.basicConfig(format=FORMAT_INFO, level=logging.DEBUG)
+                format_debug = '%(asctime)s - %(message)s'
+                logging.basicConfig(format=format_debug, level=logging.DEBUG)
             case _:
-                FORMAT_INFO = '%(asctime)s - %(levelname)s - %(message)s'
-                logging.basicConfig(format=FORMAT_INFO, level=logging.INFO)
-    
+                format_info = '%(asctime)s - %(levelname)s - %(message)s'
+                logging.basicConfig(format=format_info, level=logging.INFO)
+
     return logger
 
 
