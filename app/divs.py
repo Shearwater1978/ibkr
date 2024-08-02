@@ -18,6 +18,9 @@ import collect_divs_income_info as divscalculation
 import collect_divs_tax_info as divtaxcalculation
 
 
+logger = ''
+
+
 def configure_logging():
     logger = logging.getLogger(__name__)
 
