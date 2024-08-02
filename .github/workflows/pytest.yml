@@ -1,0 +1,27 @@
+name: Python unit tests
+run-name: Python testing 🚀
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opend, synchronize, edited, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  python-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: pip install pytest feedparser pytest-cov
+
+      - name: pytest
+        run: pytest tests/
+
+      - name: coverage
+        run: |
+          mkdir coverage/
+          coverage run -m pytest tests/
+          coverage report -m
