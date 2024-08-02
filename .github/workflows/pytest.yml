@@ -5,7 +5,8 @@ on:
   pull_request:
     types: [opend, synchronize, edited, ready_for_review]
     branches:
-      - main
+      - '*'
+      - '!main'
 
 jobs:
   python-unit-tests:
