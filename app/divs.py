@@ -18,17 +18,23 @@ import collect_divs_income_info as divscalculation
 import collect_divs_tax_info as divtaxcalculation
 
 
-logger = logging.getLogger(__name__)
+logger = ''
 
-if os.environ['DIV_LOG_LVL']:
-    DEBUG_LVL = str(os.environ['DIV_LOG_LVL']).lower()
-    match DEBUG_LVL:
-        case "debug":
-            FORMAT_INFO = '%(asctime)s - %(message)s'
-            logging.basicConfig(format=FORMAT_INFO, level=logging.DEBUG)
-        case _:
-            FORMAT_INFO = '%(asctime)s - %(levelname)s - %(message)s'
-            logging.basicConfig(format=FORMAT_INFO, level=logging.INFO)
+
+def configure_logging():
+    logger = logging.getLogger(__name__)
+
+    if os.environ['DIV_LOG_LVL']:
+        debug_lvl = str(os.environ['DIV_LOG_LVL']).lower()
+        match debug_lvl:
+            case "debug":
+                format_debug = '%(asctime)s - %(message)s'
+                logging.basicConfig(format=format_debug, level=logging.DEBUG)
+            case _:
+                format_info = '%(asctime)s - %(levelname)s - %(message)s'
+                logging.basicConfig(format=format_info, level=logging.INFO)
+
+    return logger
 
 
 def get_currency_exchange_rate(from_date, to_date, currency):
@@ -178,6 +184,8 @@ def main():
 
 
 if __name__ == '__main__':
+    logger = configure_logging()
+
     INPUT_FILE = ''
     if len(sys.argv) <= 1:
         print("Input file missed. Abort")
