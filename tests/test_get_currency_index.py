@@ -1,5 +1,6 @@
 import unittest
 
+
 from unittest.mock import patch
 from divs import get_currency_index
 
